@@ -1,5 +1,6 @@
 package com.library.management.gui;
 import com.library.management.database.*;
+import com.library.management.classes.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -12,9 +13,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class LibraryDashboard extends JFrame {
-
+    //Static Attributes
     private static final Color BUTTON_COLOR = new Color(60, 106, 117);
-    private static final Color BUTTON_HOVER_COLOR = new Color(80, 126, 137); // Lighter shade for hover
+    private static final Color BUTTON_HOVER_COLOR = new Color(80, 126, 137);
     private static final Color BACKGROUND_COLOR = new Color(240, 240, 240);
     private static final Color CARD_BACKGROUND_COLOR = new Color(255, 255, 255);
     private static final Color CARD_BORDER_COLOR = new Color(60, 106, 117);
@@ -26,22 +27,27 @@ public class LibraryDashboard extends JFrame {
     private static final Font DESC_FONT = new Font("SansSerif", Font.PLAIN, 16);
     private static final int SIDEBAR_WIDTH = 200;
 
+    //Attribute for Values of Cards
     private JLabel booksListedValueLabel;
 
-    public LibraryDashboard() {
+    //Constructor
+    public LibraryDashboard(User user) {
         setupFrame();
-        JPanel topBar = createTopBar();
+        JPanel topBar = createTopBar(user);
         JPanel sidebar = createSidebar();
         JPanel mainPanel = createMainPanel();
 
-        // Add panels to the frame
         add(topBar, BorderLayout.NORTH);
         add(sidebar, BorderLayout.WEST);
         add(mainPanel, BorderLayout.CENTER);
-        updateBookCount(); // Update the book count on initialization
+
+        //Call Update Book Count Method
+        updateBookCount();
+
         setVisible(true);
     }
 
+    //SetUp Frame
     private void setupFrame() {
         setTitle("Library Book Reservation Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -49,43 +55,44 @@ public class LibraryDashboard extends JFrame {
         setUndecorated(true);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-    }
+    }   
 
-    private JPanel createTopBar() {
+    //Create Top Bar
+    private JPanel createTopBar(User user) {
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setPreferredSize(new Dimension(getWidth(), 60));
         topBar.setBackground(Color.WHITE);
         topBar.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
-        // Title label
+        //Title label
         JLabel titleLabel = new JLabel("Library Dashboard", SwingConstants.CENTER);
         titleLabel.setFont(TITLE_FONT);
         topBar.add(titleLabel, BorderLayout.CENTER);
 
-        // User info panel
+        //User Info
         JPanel userInfoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         userInfoPanel.setBackground(Color.WHITE);
         userInfoPanel.add(new JLabel("👤"));
-        userInfoPanel.add(new JLabel("Mark Eron Diaz"));
+        userInfoPanel.add(new JLabel(user.getUsername()));
         JLabel userRole = new JLabel("Admin");
         userRole.setFont(USER_ROLE_FONT);
         userInfoPanel.add(userRole);
         topBar.add(userInfoPanel, BorderLayout.WEST);
 
-        // Time panel
+        //Time panel
         JPanel timePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         timePanel.setBackground(Color.WHITE);
         JLabel timeLabel = new JLabel();
         updateTime(timeLabel);
         new Timer(1000, e -> updateTime(timeLabel)).start();
         timePanel.add(timeLabel);
-        timePanel.add(new JLabel("⚙️"));
         timePanel.add(createCloseButton());
         topBar.add(timePanel, BorderLayout.EAST);
 
         return topBar;
     }
 
+    //Create Close Button
     private JButton createCloseButton() {
         JButton closeButton = new JButton("Close");
         closeButton.setBackground(BUTTON_COLOR);
@@ -98,6 +105,7 @@ public class LibraryDashboard extends JFrame {
         return closeButton;
     }
 
+    //Create Main Panel
     private JPanel createMainPanel() {
         JPanel mainPanel = new JPanel(new GridLayout(2, 3, 20, 20));
         mainPanel.setBackground(BACKGROUND_COLOR);
@@ -112,6 +120,7 @@ public class LibraryDashboard extends JFrame {
             {"0", "Listed Categories", "📂", "#6F42C1"}
         };
 
+        //Logic for Changing The Number of Card Values
         for (String[] stat : stats) {
             if (stat[1].equals("Books Listed")) {
                 booksListedValueLabel = new JLabel(stat[0], SwingConstants.CENTER);

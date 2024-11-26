@@ -1,5 +1,6 @@
 package com.library.management.gui;
 import com.library.management.database.*;
+import com.library.management.classes.*;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
@@ -7,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class LibraryLogin extends JFrame {
-    //Attributes
+    //Static Attributes
     private static final Color TITLE_COLOR = new Color(60, 106, 117);
     private static final Color BACKGROUND_COLOR = new Color(47, 54, 64);
     private static final Color INPUT_BACKGROUND_COLOR = Color.WHITE;
@@ -109,7 +110,8 @@ public class LibraryLogin extends JFrame {
 
             // Authenticate user
             if (databaseConnection.authenticateUser (username, password)) {
-                new LibraryDashboard().setVisible(true);
+                User loggedInUser  = new User(username);
+                new LibraryDashboard(loggedInUser).setVisible(true);
                 dispose(); // Close the login window
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid username or password", "Login Error", JOptionPane.ERROR_MESSAGE);
