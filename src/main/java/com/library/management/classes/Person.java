@@ -17,6 +17,10 @@ class Person {
         this.address = address;
     }
 
+    public Person(String name){
+        this.name = name;
+    }
+
     // Getter
     public String getName() {
         return name;
