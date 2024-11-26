@@ -137,13 +137,15 @@ public class LibraryDashboard extends JFrame {
         return mainPanel; 
     }
 
+    //Create Side Panel
     private JPanel createSidebar() {
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setBackground(BUTTON_COLOR);
         sidebar.setPreferredSize(new Dimension(SIDEBAR_WIDTH, getHeight()));
-        sidebar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Added padding
+        sidebar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        //Labels for New Windows(Books, Author, Member, Transaction, Logout)
         String[] buttonLabels = {"Books", "Author", "Member", "Transaction", "Logout"};
         for (String label : buttonLabels) {
             JButton button = createMenuButton(label);
@@ -155,6 +157,7 @@ public class LibraryDashboard extends JFrame {
         return sidebar;
     }
 
+    //Custom Button For Side Panel
     private JButton createMenuButton(String text) {
         JButton button = new JButton(text);
         button.setPreferredSize(new Dimension(180, 60));
@@ -164,7 +167,7 @@ public class LibraryDashboard extends JFrame {
         button.setBorderPainted(false);
         button.setFont(BUTTON_FONT);
         
-        // Add hover effect
+        //Add hover effect
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -180,6 +183,7 @@ public class LibraryDashboard extends JFrame {
         return button;
     }
 
+    //Dashboard Card Display 
     private JPanel createCard(String value, String description, String icon, Color bgColor) {
         JPanel card = new JPanel();
         card.setBackground(CARD_BACKGROUND_COLOR);
@@ -205,6 +209,7 @@ public class LibraryDashboard extends JFrame {
         return card;
     }
 
+    //Link to New Window(click->sidePanelButton)
     private void openPage(String page) {
         switch (page) {
             case "Books":
@@ -225,30 +230,33 @@ public class LibraryDashboard extends JFrame {
             default:
                 break;
         }
-    }
+    }   
 
+    //Time Update Method
     private void updateTime(JLabel label) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a\nMMM dd, yyyy");
         label.setText(dateFormat.format(new Date()));
     }
 
+    //Update Book Count for Card Display
     private void updateBookCount() {
-        int bookCount = getBookCountFromDatabase(); // Method to get book count from the database
-        booksListedValueLabel.setText(String.valueOf(bookCount)); // Update the label with the book count
+        int bookCount = getBookCountFromDatabase();
+        booksListedValueLabel.setText(String.valueOf(bookCount));
     }
 
+    //Method To Count Book Data from Database
     private int getBookCountFromDatabase() {
         int count = 0;
-        String query = "SELECT COUNT(*) FROM books"; // Adjust the table name as needed
+        String query = "SELECT COUNT(*) FROM books";
 
-        try (Connection connection = databaseConnection.getConnection(); // Assuming you have a DatabaseConnection class
+        try (Connection connection = databaseConnection.getConnection(); 
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery()) {
             if (resultSet.next()) {
                 count = resultSet.getInt(1);
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle exceptions appropriately
+            e.printStackTrace(); 
         }
         return count;
     }
