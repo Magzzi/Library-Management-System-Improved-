@@ -162,7 +162,7 @@ public class LibraryLogin extends JFrame {
         return button;
     }
 
-    //GridBag
+    //GridBag 
     private GridBagConstraints createGbc(int gridx, int gridy, double weightx, double weighty) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gridx;
@@ -173,14 +173,17 @@ public class LibraryLogin extends JFrame {
         return gbc;
     }
 
+    //SignUp Dialog For User Register
     private void openSignUpDialog() {
+        //Setup
         JDialog signUpDialog = new JDialog(this, "Sign Up", true);
         signUpDialog.setLayout(new GridBagLayout());
-        signUpDialog.setSize(400, 200); // Adjust the size as needed
+        signUpDialog.setSize(400, 200);
         signUpDialog.setLocationRelativeTo(this);
-    
+        
         JTextField newUsernameField = new JTextField(20);
         JPasswordField newPasswordField = new JPasswordField(20);
+
         JButton registerButton = createButton("Register", e -> {
             String newUsername = newUsernameField.getText();
             String newPassword = new String(newPasswordField.getPassword());
@@ -193,55 +196,53 @@ public class LibraryLogin extends JFrame {
             }
         });
     
-        // Layout for the dialog
+        //Layout for the dialog
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-    
-        // Username label and field
+        
+        //Username Label
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 1; // Label spans 1 column
+        gbc.gridwidth = 1; 
         signUpDialog.add(createLabel("Username:", Color.BLACK), gbc);
-    
+        //Username Field
         gbc.gridx = 1;
-        gbc.gridwidth = 19; // Field spans 19 columns to make a total of 20
+        gbc.gridwidth = 19;
         signUpDialog.add(newUsernameField, gbc);
     
-        // Password label and field
+        //Password label
         gbc.gridx = 0;
-        gbc.gridy = 1; // Move to the next row for password
-        gbc.gridwidth = 1; // Label spans 1 column
+        gbc.gridy = 1; 
+        gbc.gridwidth = 1; 
         signUpDialog.add(createLabel("Password:", Color.BLACK), gbc);
-    
+        //Password Field
         gbc.gridx = 1;
-        gbc.gridwidth = 19; // Field spans 19 columns to make a total of 20
+        gbc.gridwidth = 19; 
         signUpDialog.add(newPasswordField, gbc);
     
-        // Register button
+        //Register button
         gbc.gridx = 0;
-        gbc.gridy = 2; // Move to the next row for the button
-        gbc.gridwidth = 20; // Button spans all columns
+        gbc.gridy = 2;
+        gbc.gridwidth = 20;
         signUpDialog.add(registerButton, gbc);
     
-        // Make the dialog visible
         signUpDialog.setVisible(true);
     }
 
     //Register User -> Database 
     private boolean registerUser (String username, String password) {
-        // Implement the logic to insert the new user into the database
-        // Return true if successful, false otherwise
-        String query = "INSERT INTO users (username, password) VALUES (?, ?)"; // Adjust the table name and fields as needed
+        //SQL Insert User Registration Data
+        String query = "INSERT INTO users (username, password) VALUES (?, ?)";
 
         try (Connection connection = databaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password); // Consider hashing the password before storing
+            preparedStatement.setString(2, password);
             int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0; // Return true if at least one row was inserted
+            return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle exceptions appropriately
+            e.printStackTrace();
             return false;
         }
     }
