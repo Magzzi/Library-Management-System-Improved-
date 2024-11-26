@@ -1,9 +1,13 @@
 package com.library.management.gui;
-
+import com.library.management.database.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -22,6 +26,8 @@ public class LibraryDashboard extends JFrame {
     private static final Font DESC_FONT = new Font("SansSerif", Font.PLAIN, 16);
     private static final int SIDEBAR_WIDTH = 200;
 
+    private JLabel booksListedValueLabel;
+
     public LibraryDashboard() {
         setupFrame();
         JPanel topBar = createTopBar();
@@ -32,7 +38,7 @@ public class LibraryDashboard extends JFrame {
         add(topBar, BorderLayout.NORTH);
         add(sidebar, BorderLayout.WEST);
         add(mainPanel, BorderLayout.CENTER);
-        
+        updateBookCount(); // Update the book count on initialization
         setVisible(true);
     }
 
@@ -107,8 +113,16 @@ public class LibraryDashboard extends JFrame {
         };
 
         for (String[] stat : stats) {
-            JPanel card = createCard(stat[0], stat[1], stat[2], Color.decode(stat[3]));
-            mainPanel.add(card);
+            if (stat[1].equals("Books Listed")) {
+                booksListedValueLabel = new JLabel(stat[0], SwingConstants.CENTER);
+                booksListedValueLabel.setFont(VALUE_FONT);
+                JPanel card = createCard(stat[0], stat[1], stat[2], Color.decode(stat[3]));
+                card.add(booksListedValueLabel, BorderLayout.CENTER);
+                mainPanel.add(card);
+            } else {
+                JPanel card = createCard(stat[0], stat[1], stat[2], Color.decode(stat[3]));
+                mainPanel.add(card);
+            }
         }
 
         return mainPanel; 
@@ -207,5 +221,26 @@ public class LibraryDashboard extends JFrame {
     private void updateTime(JLabel label) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a\nMMM dd, yyyy");
         label.setText(dateFormat.format(new Date()));
+    }
+
+    private void updateBookCount() {
+        int bookCount = getBookCountFromDatabase(); // Method to get book count from the database
+        booksListedValueLabel.setText(String.valueOf(bookCount)); // Update the label with the book count
+    }
+
+    private int getBookCountFromDatabase() {
+        int count = 0;
+        String query = "SELECT COUNT(*) FROM books"; // Adjust the table name as needed
+
+        try (Connection connection = databaseConnection.getConnection(); // Assuming you have a DatabaseConnection class
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                count = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle exceptions appropriately
+        }
+        return count;
     }
 }

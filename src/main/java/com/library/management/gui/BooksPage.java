@@ -1,7 +1,6 @@
 package com.library.management.gui;
-
-import com.library.management.classes.Book;
-import com.library.management.classes.Author;
+import com.library.management.database.*;
+import com.library.management.classes.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
