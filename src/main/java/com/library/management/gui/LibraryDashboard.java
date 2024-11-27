@@ -21,7 +21,7 @@ public class LibraryDashboard extends JFrame {
     private static final Color CARD_BORDER_COLOR = new Color(60, 106, 117);
     private static final Font USER_ROLE_FONT = new Font("Arial", Font.ITALIC, 12);
     private static final Font BUTTON_FONT = new Font("Arial", Font.PLAIN, 16);
-    private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 24);
+    private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 32);
     private static final Font ICON_FONT = new Font("SansSerif", Font.PLAIN, 50);
     private static final Font VALUE_FONT = new Font("SansSerif", Font.BOLD, 24);
     private static final Font DESC_FONT = new Font("SansSerif", Font.PLAIN, 16);
@@ -29,9 +29,11 @@ public class LibraryDashboard extends JFrame {
 
     //Attribute for Values of Cards
     private JLabel booksListedValueLabel;
+    private User user;
 
     //Constructor
     public LibraryDashboard(User user) {
+        this.user = user;
         setupFrame();
         JPanel topBar = createTopBar(user);
         JPanel sidebar = createSidebar();
@@ -67,6 +69,7 @@ public class LibraryDashboard extends JFrame {
         //Title label
         JLabel titleLabel = new JLabel("Library Dashboard", SwingConstants.CENTER);
         titleLabel.setFont(TITLE_FONT);
+        titleLabel.setForeground(BUTTON_COLOR);
         topBar.add(titleLabel, BorderLayout.CENTER);
 
         //User Info
@@ -145,8 +148,14 @@ public class LibraryDashboard extends JFrame {
         sidebar.setPreferredSize(new Dimension(SIDEBAR_WIDTH, getHeight()));
         sidebar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        // Add Dashboard button first
+        JButton dashboardButton = createMenuButton("Dashboard");
+        dashboardButton.addActionListener(e -> openPage("Dashboard"));
+        sidebar.add(dashboardButton);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
+
         //Labels for New Windows(Books, Author, Member, Transaction, Logout)
-        String[] buttonLabels = {"Books", "Author", "Member", "Transaction", "Logout"};
+        String[] buttonLabels = {"Books", "Member", "Transaction", "Logout"};
         for (String label : buttonLabels) {
             JButton button = createMenuButton(label);
             button.addActionListener(e -> openPage(label));
@@ -211,22 +220,39 @@ public class LibraryDashboard extends JFrame {
 
     //Link to New Window(click->sidePanelButton)
     private void openPage(String page) {
+        // Close the current window
+        Window currentWindow = SwingUtilities.getWindowAncestor(this);
+
         switch (page) {
+            case "Dashboard":
+            // Always open a new instance of LibraryDashboard
+            if (currentWindow != null) {
+                currentWindow.dispose();
+            }
+            new LibraryDashboard(user);
+            break;
+
             case "Books":
-                new BooksPage().setVisible(true);
-                break;
-            case "Author":
-                new AuthorsPage().setVisible(true);
-                break;
+            if (!(this instanceof BooksPage)) {
+                new BooksPage(user).setVisible(true);
+                if (currentWindow != null) {
+                    currentWindow.dispose();
+                }
+            }
+            break;
+
             case "Member":
                 new MembersPage().setVisible(true);
                 break;
+
             case "Transaction":
                 new TransactionsPage().setVisible(true);
                 break;
+
             case "Logout":
                 System.exit(0);
                 break;
+
             default:
                 break;
         }

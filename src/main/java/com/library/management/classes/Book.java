@@ -94,13 +94,12 @@ public class Book{
     private int insertBookIntoDatabase() {
         try(Connection conn = databaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement
-            ("INSERT INTO Books (title, author_id, ISBN, publication_date, available_copies) VALUES (?, ?, ?, ?, ?)",
+            ("INSERT INTO Books (title, ISBN, publication_date, available_copies) VALUES (?, ?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS)){
             stmt.setString(1, title);
-            stmt.setInt(2, author.getAuthorId());
-            stmt.setString(3, ISBN);
-            stmt.setString(4, publicationDate);
-            stmt.setInt(5, availableCopies);
+            stmt.setString(2, ISBN);
+            stmt.setString(3, publicationDate);
+            stmt.setInt(4, availableCopies);
             stmt.executeUpdate();
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -115,13 +114,12 @@ public class Book{
 
     private void updateBookInDatabase() {
         try (Connection conn = databaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("UPDATE Books SET title = ?, author_id = ?, ISBN = ?, publication_date = ?, available_copies = ? WHERE book_id = ?")) {
+             PreparedStatement stmt = conn.prepareStatement("UPDATE Books SET title = ?, ISBN = ?, publication_date = ?, available_copies = ? WHERE book_id = ?")) {
             stmt.setString(1, title);
-            stmt.setInt(2, author.getAuthorId());
-            stmt.setString(3, ISBN);
-            stmt.setString(4, publicationDate);
-            stmt.setInt(5, availableCopies);
-            stmt.setInt(6, bookId);
+            stmt.setString(2, ISBN);
+            stmt.setString(3, publicationDate);
+            stmt.setInt(4, availableCopies);
+            stmt.setInt(5, bookId);
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error updating book: " + e.getMessage());

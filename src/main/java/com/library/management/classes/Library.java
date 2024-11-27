@@ -113,7 +113,7 @@ public class Library {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     String name = rs.getString("name");
-                    return new Author(name, 0, "", authorId);
+                    return new Author(name);
                 }
             }
         } catch (SQLException e) {

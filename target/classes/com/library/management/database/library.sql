@@ -24,8 +24,9 @@ CREATE TABLE users (
     password TEXT NOT NULL
 );
 
-DELETE FROM Books;
 
-
+DELETE FROM books;
+DELETE FROM authors;
+DELETE FROM sqlite_sequence;
 
 

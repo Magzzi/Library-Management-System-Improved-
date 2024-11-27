@@ -12,17 +12,12 @@ public class Author extends Person{
     private List<Book> books;
 
     //Constructor w/ parameters, inheriting from Person Class
-    public Author(String name, int age, String address, int authorId) {
-        super(name, age, address);
-        this.authorId = authorId;
+    public Author(String name) {
+        super(name);
         this.books = new ArrayList<>();
     }
 
     //Getter
-    public int getAuthorId(){
-        return authorId;
-    }
-
     public String getName(){
         return super.getName();
     }
