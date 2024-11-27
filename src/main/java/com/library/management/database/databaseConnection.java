@@ -1,5 +1,4 @@
 package com.library.management.database;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -27,13 +26,13 @@ public class databaseConnection {
 
    //Close Connection Method
    public static void closeConnection(Connection connection) {
-         try{
-            if(connection != null){
-               connection.close();
-            }
-         }catch(SQLException e) {
-            System.err.println("Error closing database connection: " + e.getMessage());
+      try{
+         if(connection != null){
+            connection.close();
          }
+      }catch(SQLException e) {
+         System.err.println("Error closing database connection: " + e.getMessage());
+      }
    }
 
    //Authenticate User Method
