@@ -1,5 +1,4 @@
 package com.library.management.gui;
-
 import com.library.management.database.*;
 import com.library.management.classes.*;
 import javax.swing.*;
@@ -30,7 +29,7 @@ public class BooksPage extends LibraryDashboard {
 
     //Constructor
     public BooksPage(User user) {
-        super(user);
+        super(user, null);
         bookList = new ArrayList<>();
         setTitle("Books Management");
         setupUI();
@@ -52,7 +51,7 @@ public class BooksPage extends LibraryDashboard {
 
         //Create a panel to add padding around the JScrollPane
         JPanel tablePanel = new JPanel(new BorderLayout());
-        tablePanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+        tablePanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 10, 50));
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         //Create buttons to add, remove, and update books
@@ -80,10 +79,20 @@ public class BooksPage extends LibraryDashboard {
             }
         };
 
-        //Set table color
+        // Set table color
         table.getTableHeader().setBackground(TABLE_HEADER_COLOR);
         table.getTableHeader().setForeground(TABLE_TEXT_COLOR);
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        
+        // Set font size for the table header
+        Font headerFont = new Font("Arial", Font.BOLD, 18); // Change 16 to your desired font size
+        table.getTableHeader().setFont(headerFont);
+        
+        // Set font size for the table
+        Font tableFont = new Font("Arial", Font.PLAIN, 16); // Change 14 to your desired font size
+        table.setFont(tableFont);
+
+        table.setRowHeight(30);
+        
         table.getTableHeader().setBorder(new LineBorder(DARKER_THEME_COLOR, 1));
         table.setBackground(TABLE_BACKGROUND_COLOR);
         table.setForeground(TABLE_TEXT_COLOR);
@@ -91,21 +100,25 @@ public class BooksPage extends LibraryDashboard {
         return table;
     }
 
-    //Create Custom Button
+    //Create Custom Button Panel
     private JPanel createButtonPanel() {
+        //Create buttons
         JButton addButton = new JButton("Add Book");
-        addButton.setBackground(THEME_COLOR);
-        addButton.setForeground(Color.WHITE);
-        addButton.addActionListener(e -> showBookInputDialog("Add", null, THEME_COLOR, DARKER_THEME_COLOR));
-
         JButton removeButton = new JButton("Remove Book");
-        removeButton.setBackground(THEME_COLOR);
-        removeButton.setForeground(Color.WHITE);
-        removeButton.addActionListener(e -> removeBook());
-
         JButton updateButton = new JButton("Update Book");
-        updateButton.setBackground(THEME_COLOR);
-        updateButton.setForeground(Color.WHITE);
+
+        //Set common properties for all buttons
+        for (JButton button : new JButton[]{addButton, removeButton, updateButton}) {
+            button.setBackground(THEME_COLOR);
+            button.setForeground(Color.WHITE);
+            button.setPreferredSize(new Dimension(120, 40));
+            button.setMinimumSize(new Dimension(120, 40)); 
+            button.setMaximumSize(new Dimension(120, 40)); 
+        }
+
+        //Add action listeners
+        addButton.addActionListener(e -> showBookInputDialog("Add", null, THEME_COLOR, DARKER_THEME_COLOR));
+        removeButton.addActionListener(e -> removeBook());
         updateButton.addActionListener(e -> {
             int selectedRow = booksTable.getSelectedRow();
             if (selectedRow != -1) {
@@ -116,10 +129,15 @@ public class BooksPage extends LibraryDashboard {
             }
         });
 
+        //Create button panel and add buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addButton);
         buttonPanel.add(removeButton);
         buttonPanel.add(updateButton);
+
+        // Add padding to the bottom of the button panel
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0)); // 10px padding at the bottom
+
         return buttonPanel;
     }
 

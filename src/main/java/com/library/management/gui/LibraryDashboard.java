@@ -29,11 +29,14 @@ public class LibraryDashboard extends JFrame {
 
     //Attribute for Values of Cards
     private JLabel booksListedValueLabel;
+    private JLabel authorsListedValueLabel;
     private User user;
+    private Library library;
 
     //Constructor
-    public LibraryDashboard(User user) {
+    public LibraryDashboard(User user, Library library) {
         this.user = user;
+        this.library = library;
         setupFrame();
         JPanel topBar = createTopBar(user);
         JPanel sidebar = createSidebar();
@@ -43,8 +46,8 @@ public class LibraryDashboard extends JFrame {
         add(sidebar, BorderLayout.WEST);
         add(mainPanel, BorderLayout.CENTER);
 
-        //Call Update Book Count Method
-        updateBookCount();
+        //Call Update Count Method(Count for Books and Authors)
+        updateCounts();
 
         setVisible(true);
     }
@@ -131,7 +134,13 @@ public class LibraryDashboard extends JFrame {
                 JPanel card = createCard(stat[0], stat[1], stat[2], Color.decode(stat[3]));
                 card.add(booksListedValueLabel, BorderLayout.CENTER);
                 mainPanel.add(card);
-            } else {
+            } else if (stat[1].equals("Authors Listed")) {
+                authorsListedValueLabel = new JLabel(stat[0], SwingConstants.CENTER);
+                authorsListedValueLabel.setFont(VALUE_FONT);
+                JPanel card = createCard(stat[0], stat[1], stat[2], Color.decode(stat[3]));
+                card.add(authorsListedValueLabel, BorderLayout.CENTER);
+                mainPanel.add(card);
+            }else {
                 JPanel card = createCard(stat[0], stat[1], stat[2], Color.decode(stat[3]));
                 mainPanel.add(card);
             }
@@ -229,7 +238,7 @@ public class LibraryDashboard extends JFrame {
             if (currentWindow != null) {
                 currentWindow.dispose();
             }
-            new LibraryDashboard(user);
+            new LibraryDashboard(user, library);
             break;
 
             case "Books":
@@ -242,12 +251,20 @@ public class LibraryDashboard extends JFrame {
             break;
 
             case "Member":
-                new MembersPage().setVisible(true);
+                if (currentWindow != null) {
+                    currentWindow.dispose();
+                }
+                currentWindow = new MembersPage(user);
+                currentWindow.setVisible(true);
                 break;
 
             case "Transaction":
-                new TransactionsPage().setVisible(true);
-                break;
+                if (currentWindow != null) {
+                    currentWindow.dispose();
+                }
+                currentWindow = new TransactionsPage(user, library);
+                currentWindow.setVisible(true);
+            break;
 
             case "Logout":
                 System.exit(0);
@@ -262,6 +279,35 @@ public class LibraryDashboard extends JFrame {
     private void updateTime(JLabel label) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a\nMMM dd, yyyy");
         label.setText(dateFormat.format(new Date()));
+    }
+
+    // Update Book and Author Count for Card Display
+    private void updateCounts() {
+        updateBookCount();
+        updateAuthorCount();
+    }
+
+    // Method to update the author count
+    private void updateAuthorCount() {
+        int authorCount = getAuthorCountFromDatabase();
+        authorsListedValueLabel.setText(String.valueOf(authorCount));
+    }
+
+    // Method To Count Author Data from Database
+    private int getAuthorCountFromDatabase() {
+        int count = 0;
+        String query = "SELECT COUNT(*) FROM authors"; // Assuming you have a table named 'authors'
+
+        try (Connection connection = databaseConnection.getConnection(); 
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                count = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); 
+        }
+        return count;
     }
 
     //Update Book Count for Card Display

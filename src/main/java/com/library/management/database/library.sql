@@ -24,6 +24,17 @@ CREATE TABLE users (
     password TEXT NOT NULL
 );
 
+CREATE TABLE BorrowedBooks (
+    borrow_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    member_id INTEGER,
+    book_id INTEGER,
+    borrow_date TEXT,
+    return_date TEXT,
+    FOREIGN KEY (member_id) REFERENCES members (member_id),
+    FOREIGN KEY (book_id) REFERENCES Books (book_id),
+    UNIQUE (member_id, book_id)
+);
+
 
 DELETE FROM books;
 DELETE FROM authors;

@@ -111,7 +111,7 @@ public class LibraryLogin extends JFrame {
             // Authenticate user
             if (databaseConnection.authenticateUser (username, password)) {
                 User loggedInUser  = new User(username);
-                new LibraryDashboard(loggedInUser).setVisible(true);
+                new LibraryDashboard(loggedInUser, null).setVisible(true);
                 dispose(); // Close the login window
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid username or password", "Login Error", JOptionPane.ERROR_MESSAGE);
