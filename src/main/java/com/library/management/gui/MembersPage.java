@@ -10,6 +10,7 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -197,9 +198,21 @@ public class MembersPage extends LibraryDashboard {
 
     // Database Methods (if applicable)
     private void loadMembersFromDatabase() {
-        // Implement database loading logic here
-        // Example: Fetch members from the database and populate memberList and tableModel
+    String sql = "SELECT member_name FROM members"; // Adjust the SQL query as per your database schema
+    try (Connection conn = databaseConnection.getConnection(); // Assuming you have a method to get a DB connection
+         PreparedStatement pstmt = conn.prepareStatement(sql);
+         ResultSet rs = pstmt.executeQuery()) {
+
+        while (rs.next()) {
+            String memberName = rs.getString("member_name");
+            Member member = new Member(memberName); // Assuming Member has a constructor that accepts name
+            memberList.add(member);
+            tableModel.addRow(new Object[]{memberName}); // Add member name to table model
+        }
+    } catch (SQLException e) {
+        showError("Error loading members from database: " + e.getMessage());
     }
+}
 
     // Add member to the table
     private void addMember() {
