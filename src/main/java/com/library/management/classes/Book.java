@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Book{
+public class Book {
     private String title;
     private Author author;
     private String ISBN;
@@ -14,8 +14,8 @@ public class Book{
     private int availableCopies;
     int bookId;
 
-    //Constructor
-    public Book(String title, Author author, String ISBN, String publicationDate, int availableCopies){
+    // Constructor
+    public Book(String title, Author author, String ISBN, String publicationDate, int availableCopies) {
         this.title = title;
         this.author = author;
         this.ISBN = ISBN;
@@ -24,24 +24,24 @@ public class Book{
         this.bookId = insertBookIntoDatabase();
     }
 
-    //Getters
-    public String getTitle(){
+    // Getters
+    public String getTitle() {
         return title;
     }
 
-    public Author getAuthor(){
+    public Author getAuthor() {
         return author;
     }
 
-    public String getISBN(){
+    public String getISBN() {
         return ISBN;
     }
 
-    public String getPublicationDate(){
+    public String getPublicationDate() {
         return publicationDate;
     }
 
-    public int getAvailableCopies(){
+    public int getAvailableCopies() {
         return availableCopies;
     }
 
@@ -49,25 +49,24 @@ public class Book{
         return bookId;
     }
 
-
-    //Setter
-    public void setTitle(String title){
+    // Setter
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setAuthor(Author author){
+    public void setAuthor(Author author) {
         this.author = author;
     }
 
-    public void setISBN(String ISBN){
+    public void setISBN(String ISBN) {
         this.ISBN = ISBN;
     }
 
-    public void setPublicationDate(String publicationDate){
+    public void setPublicationDate(String publicationDate) {
         this.publicationDate = publicationDate;
     }
 
-    public void setAvailableCopies(int availableCopies){
+    public void setAvailableCopies(int availableCopies) {
         this.availableCopies = availableCopies;
         updateBookInDatabase();
     }
@@ -75,34 +74,26 @@ public class Book{
     public void setBookId(int bookId) {
         this.bookId = bookId;
     }
-    
-    @Override
-    public String toString() {
-        return title + " by " + (author != null ? author.getName() : "Unknown Author");
-    }
 
-    //Methods
-    public void borrowBook(){
-        if(availableCopies > 0){
+    // Methods
+    public void borrowBook() {
+        if (availableCopies > 0) {
             availableCopies--;
             updateBookInDatabase();
-        }else{
+        } else {
             System.out.println("No Available Copies to Borrow");
         }
     }
 
-    public void returnBook(){
+    public void returnBook() {
         availableCopies++;
         updateBookInDatabase();
     }
 
-    
-
+    // Insert Book into the Database
     private int insertBookIntoDatabase() {
-        try(Connection conn = databaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement
-            ("INSERT INTO Books (title, ISBN, publication_date, available_copies) VALUES (?, ?, ?, ?)",
-            Statement.RETURN_GENERATED_KEYS)){
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("INSERT INTO Books (title, ISBN, publication_date, available_copies) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, title);
             stmt.setString(2, ISBN);
             stmt.setString(3, publicationDate);
@@ -119,6 +110,7 @@ public class Book{
         return -1;
     }
 
+    // Update Book in the Database
     private void updateBookInDatabase() {
         try (Connection conn = databaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement("UPDATE Books SET title = ?, ISBN = ?, publication_date = ?, available_copies = ? WHERE book_id = ?")) {
@@ -132,5 +124,19 @@ public class Book{
             System.err.println("Error updating book: " + e.getMessage());
         }
     }
-}
 
+    // Delete Book and Reset Sequence
+    public void deleteBookFromDatabase() {
+        String deleteBookQuery = "DELETE FROM Books WHERE book_id = ?";
+        String resetSequenceQuery = "UPDATE sqlite_sequence SET seq = (SELECT MAX(book_id) FROM Books) WHERE name = 'Books'";
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement deleteStmt = conn.prepareStatement(deleteBookQuery);
+             PreparedStatement resetStmt = conn.prepareStatement(resetSequenceQuery)) {
+            deleteStmt.setInt(1, bookId);
+            deleteStmt.executeUpdate();
+            resetStmt.executeUpdate();  // Reset the book sequence
+        } catch (SQLException e) {
+            System.err.println("Error deleting book: " + e.getMessage());
+        }
+    }
+}
