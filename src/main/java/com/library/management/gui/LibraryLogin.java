@@ -20,9 +20,10 @@ public class LibraryLogin extends JFrame {
     //Attributes for Input fields of username and password
     private JTextField usernameField;
     private JPasswordField passwordField;
+    private Library library;
 
     //Constructor
-    public LibraryLogin() {
+    public LibraryLogin(Library library) {
         setupFrame();
         JPanel mainPanel = createMainPanel();
         add(mainPanel);
@@ -111,7 +112,7 @@ public class LibraryLogin extends JFrame {
             // Authenticate user
             if (databaseConnection.authenticateUser (username, password)) {
                 User loggedInUser  = new User(username);
-                new LibraryDashboard(loggedInUser, null).setVisible(true);
+                new LibraryDashboard(loggedInUser , library).setVisible(true); // Pass the library instance
                 dispose(); // Close the login window
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid username or password", "Login Error", JOptionPane.ERROR_MESSAGE);

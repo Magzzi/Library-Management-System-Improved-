@@ -243,13 +243,12 @@ public class LibraryDashboard extends JFrame {
                 break;
 
             case "Books":
-                if (!(this instanceof BooksPage)) {
-                    new BooksPage(user).setVisible(true);
-                    if (currentWindow != null) {
-                        currentWindow.dispose();
-                    }
+                if (currentWindow != null) {
+                    currentWindow.dispose();
                 }
-                break;
+                currentWindow = new BooksPage(user);
+                currentWindow.setVisible(true);
+                break;      
 
             case "Member":
                 if (currentWindow != null) {
@@ -263,7 +262,7 @@ public class LibraryDashboard extends JFrame {
                 if (currentWindow != null) {
                     currentWindow.dispose();
                 }
-                currentWindow = new TransactionsPage(user, library);
+                currentWindow = new TransactionsPage(user);
                 currentWindow.setVisible(true);
                 break;
 

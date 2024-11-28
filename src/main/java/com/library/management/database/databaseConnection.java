@@ -15,7 +15,8 @@ public class databaseConnection {
       try{
          Class.forName("org.sqlite.JDBC");
          c = DriverManager.getConnection(URL);
-      }catch( Exception e ){
+         System.out.println("Opened database successfully");
+      }catch(Exception e ){
          System.err.println( e.getClass().getName() + ": " + e.getMessage() );
          System.exit(0);
       }finally{
@@ -26,13 +27,13 @@ public class databaseConnection {
 
    //Close Connection Method
    public static void closeConnection(Connection connection) {
-      try{
-         if(connection != null){
-            connection.close();
+      if (connection != null) {
+         try {
+             connection.close();
+         } catch (SQLException e) {
+             System.err.println("Error closing database connection: " + e.getMessage());
          }
-      }catch(SQLException e) {
-         System.err.println("Error closing database connection: " + e.getMessage());
-      }
+     }
    }
 
    //Authenticate User Method

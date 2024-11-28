@@ -17,6 +17,11 @@ public class Member extends Person {
         return borrowedBooks;
     }
 
+    @Override
+    public String toString() {
+        return getName() + " (Borrowed Books: " + borrowedBooks.size() + ")";
+    }
+
     // Method to borrow a book
     public void borrowBook(Book book) {
         if (!borrowedBooks.contains(book)) {

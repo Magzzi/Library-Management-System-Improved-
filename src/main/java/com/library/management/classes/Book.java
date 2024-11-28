@@ -75,6 +75,11 @@ public class Book{
     public void setBookId(int bookId) {
         this.bookId = bookId;
     }
+    
+    @Override
+    public String toString() {
+        return title + " by " + (author != null ? author.getName() : "Unknown Author");
+    }
 
     //Methods
     public void borrowBook(){
@@ -90,6 +95,8 @@ public class Book{
         availableCopies++;
         updateBookInDatabase();
     }
+
+    
 
     private int insertBookIntoDatabase() {
         try(Connection conn = databaseConnection.getConnection();

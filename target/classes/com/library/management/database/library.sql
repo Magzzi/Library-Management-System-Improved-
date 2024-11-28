@@ -36,8 +36,8 @@ CREATE TABLE BorrowedBooks (
 );
 
 
-DELETE FROM books;
-DELETE FROM authors;
-DELETE FROM sqlite_sequence;
+SELECT * FROM Books;
+SELECT * FROM Members;
+SELECT * FROM Authors;
 
-
+DELETE FROM BorrowedBooks;
