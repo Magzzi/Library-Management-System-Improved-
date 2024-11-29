@@ -71,7 +71,7 @@ public class LibraryLogin extends JFrame {
         (int) (Toolkit.getDefaultToolkit().getScreenSize().height * 0.3)));
 
         //Title Label
-        JLabel titleLabel = new JLabel("Library Management System", JLabel.CENTER);
+        JLabel titleLabel = new JLabel("LIBRARY MANAGEMENT SYSTEM", JLabel.CENTER);
         titleLabel.setFont(TITLE_FONT);
         titleLabel.setForeground(Color.WHITE);
         titlePanel.add(titleLabel, BorderLayout.CENTER);
