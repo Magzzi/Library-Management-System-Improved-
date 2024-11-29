@@ -89,9 +89,27 @@ INSERT INTO Authors (name) VALUES
 ('Jane Austen'), ('Charles Dickens'), ('Mark Twain'), 
 ('Ernest Hemingway'), ('Leo Tolstoy'), ('F. Scott Fitzgerald');
 
+-- Insert books with valid author_id
+INSERT INTO Books (title, author_id, ISBN, publication_date, available_copies) VALUES
+('Harry Potter and the Sorcerer\'s Stone', 1, '9780747532743', '1997-06-26', 10),
+('A Game of Thrones', 2, '9780553103540', '1996-08-06', 5),
+('The Hobbit', 3, '9780007458424', '1937-09-21', 8),
+('Murder on the Orient Express', 4, '9780062693662', '1934-01-01', 6),
+('The Da Vinci Code', 5, '9780385504201', '2003-03-18', 12),
+('The Shining', 6, '9780307743657', '1977-01-28', 4),
+('Norwegian Wood', 7, '9780375704024', '1987-09-04', 9),
+('Foundation', 8, '9780553293357', '1951-06-01', 7),
+('2001: A Space Odyssey', 9, '9780451457998', '1968-06-01', 5),
+('Pride and Prejudice', 10, '9780141040349', '1813-01-28', 15),
+('Oliver Twist', 11, '9780199536195', '1837-02-01', 7),
+('The Adventures of Huckleberry Finn', 12, '9780486280615', '1884-12-10', 6),
+('The Old Man and the Sea', 13, '9780684801223', '1952-09-01', 4),
+('War and Peace', 14, '9780307266934', '1869-03-01', 3),
+('The Great Gatsby', 15, '9780743273565', '1925-04-10', 10);
 
 
 -- Members Data
+-- Note: Added new sample members with some borrowing data
 INSERT INTO members (member_name) VALUES
 ('John Doe'),
 ('Jane Smith'),
@@ -130,6 +148,7 @@ INSERT INTO users (username, password) VALUES
 -- BorrowedBooks Data
 INSERT INTO BorrowedBooks (member_id, book_id, borrow_date, return_date) VALUES
 (1, 1, '2024-10-01', '2024-10-15'),
+(1, 2, '2024-10-01', '2024-10-15'),  -- John Doe borrowed 2 books
 (2, 2, '2024-10-05', '2024-10-19'),
 (3, 3, '2024-10-10', '2024-10-24'),
 (4, 4, '2024-10-12', '2024-10-26'),
@@ -145,3 +164,26 @@ INSERT INTO BorrowedBooks (member_id, book_id, borrow_date, return_date) VALUES
 (14, 14, '2024-11-07', '2024-11-21'),
 (15, 15, '2024-11-10', '2024-11-24');
 
+
+
+DROP VIEW IF EXISTS member_details_view;
+
+CREATE VIEW IF NOT EXISTS member_details_view AS
+SELECT 
+    m.member_id, 
+    m.member_name, 
+    GROUP_CONCAT(b.title, ', ') AS borrowed_books
+FROM 
+    members m
+LEFT JOIN 
+    BorrowedBooks bb ON m.member_id = bb.member_id
+LEFT JOIN 
+    Books b ON bb.book_id = b.book_id
+GROUP BY 
+    m.member_id, m.member_name;
+
+SELECT * FROM BorrowedBooks;
+
+SELECT * FROM Books;
+
+SELECT * FROM member_details_view;
