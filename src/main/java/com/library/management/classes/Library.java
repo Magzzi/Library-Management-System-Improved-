@@ -33,6 +33,7 @@ public class Library {
     public List<Member> getAllMembers() throws SQLException{
         return new ArrayList<>(members);
     }
+
     
     // Methods to add and remove books
     public void addBook(Book book) {

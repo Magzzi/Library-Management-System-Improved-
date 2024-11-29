@@ -107,7 +107,6 @@ INSERT INTO Books (title, author_id, ISBN, publication_date, available_copies) V
 ('War and Peace', 14, '9780307266934', '1869-03-01', 3),
 ('The Great Gatsby', 15, '9780743273565', '1925-04-10', 10);
 
-
 -- Members Data
 -- Note: Added new sample members with some borrowing data
 INSERT INTO members (member_name) VALUES

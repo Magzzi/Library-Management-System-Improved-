@@ -75,6 +75,10 @@ public class Book {
         this.bookId = bookId;
     }
 
+    public String toString(){
+        return title.toString();
+    }
+
     // Methods
     public void borrowBook() {
         if (availableCopies > 0) {

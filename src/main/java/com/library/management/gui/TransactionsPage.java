@@ -4,7 +4,6 @@ import com.library.management.classes.Book;
 import com.library.management.classes.Member;
 import com.library.management.classes.User;
 import com.library.management.classes.Library;
-
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
@@ -107,6 +106,7 @@ public class TransactionsPage extends LibraryDashboard {
         comboBox.setForeground(Color.BLACK);
         comboBox.setBorder(BorderFactory.createLineBorder(TABLE_HEADER_COLOR));
     }
+
 
     // Load books and members from the database
     private void loadBooksAndMembers() {

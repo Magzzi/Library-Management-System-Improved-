@@ -60,7 +60,7 @@ public class Member extends Person {
 
     @Override
     public String toString() {
-        return getName() + " (ID: " + memberId + ", Borrowed Books: " + borrowedBooks.size() + ")";
+        return getName();
     }
 
     // Method to borrow a book
