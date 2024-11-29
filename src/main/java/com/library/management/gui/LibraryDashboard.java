@@ -267,7 +267,11 @@ public class LibraryDashboard extends JFrame {
                 break;
 
             case "Logout":
-                System.exit(0);
+                if (currentWindow != null) {
+                    currentWindow.dispose();
+                }
+                currentWindow = new LibraryLogin(library);
+                currentWindow.setVisible(true);
                 break;
 
             default:
