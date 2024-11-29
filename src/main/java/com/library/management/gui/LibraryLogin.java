@@ -14,7 +14,7 @@ public class LibraryLogin extends JFrame {
     private static final Color INPUT_BACKGROUND_COLOR = Color.WHITE;
     private static final Color INPUT_FOREGROUND_COLOR = new Color(50, 50, 50);
     private static final Color BUTTON_COLOR = new Color(60, 106, 117);
-    private static final Font TITLE_FONT = new Font("Roboto", Font.BOLD, 35);
+    private static final Font TITLE_FONT = new Font("Roboto", Font.BOLD, 36);
     private static final Font BUTTON_FONT = new Font("Roboto", Font.BOLD, 14);
 
     //Attributes for Input fields of username and password
