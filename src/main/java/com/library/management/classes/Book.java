@@ -1,4 +1,5 @@
 package com.library.management.classes;
+
 import com.library.management.database.databaseConnection;
 import java.sql.Connection;
 import java.sql.Statement;
@@ -6,17 +7,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Book{
+public class Book {
     private int bookId;
     private String title;
     private Author author;
     private String ISBN;
     private String publicationDate;
     private int availableCopies;
-    
 
-    //Constructor for existing books
-    public Book(int bookId, String title, Author author, String ISBN, String publicationDate, int availableCopies){
+    // Constructor for existing books
+    public Book(int bookId, String title, Author author, String ISBN, String publicationDate, int availableCopies) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
@@ -44,24 +44,24 @@ public class Book{
         return true; // Already saved
     }
 
-    //Getters
-    public String getTitle(){
+    // Getters
+    public String getTitle() {
         return title;
     }
 
-    public Author getAuthor(){
+    public Author getAuthor() {
         return author;
     }
 
-    public String getISBN(){
+    public String getISBN() {
         return ISBN;
     }
 
-    public String getPublicationDate(){
+    public String getPublicationDate() {
         return publicationDate;
     }
 
-    public int getAvailableCopies(){
+    public int getAvailableCopies() {
         return availableCopies;
     }
 
@@ -69,25 +69,24 @@ public class Book{
         return bookId;
     }
 
-
-    //Setter
-    public void setTitle(String title){
+    // Setters
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setAuthor(Author author){
+    public void setAuthor(Author author) {
         this.author = author;
     }
 
-    public void setISBN(String ISBN){
+    public void setISBN(String ISBN) {
         this.ISBN = ISBN;
     }
 
-    public void setPublicationDate(String publicationDate){
+    public void setPublicationDate(String publicationDate) {
         this.publicationDate = publicationDate;
     }
 
-    public void setAvailableCopies(int availableCopies){
+    public void setAvailableCopies(int availableCopies) {
         this.availableCopies = availableCopies;
         updateBookInDatabase();
     }
@@ -95,32 +94,33 @@ public class Book{
     public void setBookId(int bookId) {
         this.bookId = bookId;
     }
-    
+
     @Override
     public String toString() {
         return title + " by " + (author != null ? author.getName() : "Unknown Author");
     }
 
-    //Methods
-    public void borrowBook(){
-        if(availableCopies > 0){
+    // Methods for borrowing and returning books
+    public void borrowBook() {
+        if (availableCopies > 0) {
             availableCopies--;
             updateBookInDatabase();
-        }else{
+        } else {
             System.out.println("No Available Copies to Borrow");
         }
     }
 
-    public void returnBook(){
+    public void returnBook() {
         availableCopies++;
         updateBookInDatabase();
     }
 
+    // Database interaction methods
     private int insertBookIntoDatabase() {
-        try(Connection conn = databaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement
-            ("INSERT INTO Books (title, ISBN, publication_date, available_copies) VALUES (?, ?, ?, ?)",
-            Statement.RETURN_GENERATED_KEYS)){
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "INSERT INTO Books (title, ISBN, publication_date, available_copies) VALUES (?, ?, ?, ?)",
+                     Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, title);
             stmt.setString(2, ISBN);
             stmt.setString(3, publicationDate);
@@ -139,7 +139,8 @@ public class Book{
 
     private void updateBookInDatabase() {
         try (Connection conn = databaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("UPDATE Books SET title = ?, ISBN = ?, publication_date = ?, available_copies = ? WHERE book_id = ?")) {
+             PreparedStatement stmt = conn.prepareStatement(
+                     "UPDATE Books SET title = ?, ISBN = ?, publication_date = ?, available_copies = ? WHERE book_id = ?")) {
             stmt.setString(1, title);
             stmt.setString(2, ISBN);
             stmt.setString(3, publicationDate);
@@ -166,4 +167,3 @@ public class Book{
         }
     }
 }
-

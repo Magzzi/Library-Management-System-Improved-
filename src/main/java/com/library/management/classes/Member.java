@@ -12,29 +12,29 @@ public class Member extends Person {
     private int memberId;
     private List<Book> borrowedBooks;
 
-    // Constructor
+    // Constructors
     public Member(int memberId, String name, String borrowedBooks) {
         super(name); // Assuming Person has a constructor that accepts name
         this.memberId = memberId;
         this.borrowedBooks = new ArrayList<>();
     }
 
-    public Member(String name){
+    public Member(String name) {
         super(name);
         this.borrowedBooks = new ArrayList<>();
     }
 
-    // Getter
+    // Getters
     public List<Book> getBorrowedBooks() {
         return borrowedBooks != null ? borrowedBooks : new ArrayList<>();
     }
 
     public int getMemberId() {
-		return memberId;
-	}
+        return memberId;
+    }
 
     // Setter
-    public void setMemberId(int memberId){
+    public void setMemberId(int memberId) {
         this.memberId = memberId;
     }
 
@@ -52,27 +52,28 @@ public class Member extends Person {
                        "LEFT JOIN Books b ON bb.book_id = b.book_id " +
                        "WHERE m.member_id = ? " +
                        "GROUP BY m.member_id, m.member_name";
-        
+
         try (Connection conn = databaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, memberId);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 this.memberId = rs.getInt("memberID");
                 setName(rs.getString("memberName"));
-                
+
                 // Clear existing borrowed books
                 this.borrowedBooks.clear();
-                
+
                 // Split the concatenated book titles into a list
                 String borrowedBooksStr = rs.getString("borrowedBooks");
                 if (borrowedBooksStr != null) {
                     String[] booksArray = borrowedBooksStr.split(", ");
                     for (String bookTitle : booksArray) {
                         Book book = findBookByTitle(bookTitle);
-                        if (book != null)
+                        if (book != null) {
                             this.borrowedBooks.add(book);
+                        }
                     }
                 }
             }

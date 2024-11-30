@@ -1,6 +1,5 @@
 package com.library.management.database;
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,7 +10,6 @@ public class databaseConnection {
 
    //Get Connection Method
    public static Connection getConnection() throws SQLException{
-      Connection c = null;
       
       try{
          Class.forName("org.sqlite.JDBC");
