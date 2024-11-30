@@ -87,11 +87,11 @@ public class TransactionsPage extends LibraryDashboard {
         // Create a JScrollPane for the table
         JScrollPane scrollPane = new JScrollPane(transactionsTable);
         scrollPane.setPreferredSize(new Dimension(0, 0));
-        scrollPane.setMaximumSize(new Dimension((int) (Toolkit.getDefaultToolkit().getScreenSize().width * 0.5), Integer.MAX_VALUE));
+        scrollPane.setMaximumSize(new Dimension(0, 0));
 
         // Create a panel to add padding around the JScrollPane
         JPanel tablePanel = new JPanel(new BorderLayout());
-        tablePanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 10, 50));
+        tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 10, 50));
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         mainPanel.add(transactionPanel, BorderLayout.NORTH);
