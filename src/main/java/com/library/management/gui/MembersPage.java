@@ -5,6 +5,8 @@ import com.library.management.classes.User;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -46,6 +48,33 @@ public class MembersPage extends LibraryDashboard {
         tableModel = new DefaultTableModel(columnNames, 0);
         membersTable = createMembersTable();
 
+        // Create a search bar
+        JTextField searchField = new JTextField();
+        searchField.setToolTipText("Search by Member Name");
+        searchField.setPreferredSize(new Dimension(200, 30));
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterMembers(searchField.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterMembers(searchField.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterMembers(searchField.getText());
+            }
+        }); 
+
+        // Create a panel to hold the search field
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchPanel.add(new JLabel("Search: "), BorderLayout.WEST);
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 150, 0, 150)); // Add padding
+
         // Create a JScrollPane for the table
         JScrollPane scrollPane = new JScrollPane(membersTable);
         scrollPane.setPreferredSize(new Dimension(0, 0));
@@ -53,16 +82,34 @@ public class MembersPage extends LibraryDashboard {
 
         // Create a panel to add padding around the JScrollPane
         JPanel tablePanel = new JPanel(new BorderLayout());
-        tablePanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 10, 50));
+        tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 10, 50));
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         // Create buttons to add, remove, and update members
         JPanel buttonPanel = createButtonPanel();
 
+        mainPanel.add(searchPanel, BorderLayout.NORTH);
         mainPanel.add(tablePanel, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(mainPanel, BorderLayout.CENTER);
+    }
+
+    private void filterMembers(String query) {
+        // Clear the current table model
+        tableModel.setRowCount(0);
+        
+        // Filter the member list based on the search query
+        for (Member member : memberList) {
+            String memberName = member.getName().toLowerCase(); // Assuming getName() returns the member's name
+            if (memberName.contains(query.toLowerCase())) {
+                tableModel.addRow(new Object[]{
+                    member.getMemberId(),
+                    member.getName(),
+                    member.getBorrowedBooks()
+                });
+            }
+        }
     }
 
     // Create members table

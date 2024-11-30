@@ -3,6 +3,8 @@ import com.library.management.database.*;
 import com.library.management.classes.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -26,6 +28,7 @@ public class BooksPage extends LibraryDashboard {
     private DefaultTableModel tableModel;
     private List<Book> bookList;
     private List<JTextField> inputFields;
+    private JTextField searchField;
 
     //Constructor
     public BooksPage(User user) {
@@ -44,6 +47,27 @@ public class BooksPage extends LibraryDashboard {
         tableModel = new DefaultTableModel(columnNames, 0);
         booksTable = createBooksTable();
 
+        // Create a search bar
+        searchField = new JTextField();
+        searchField.setToolTipText("Search by Title or Author");
+        searchField.setPreferredSize(new Dimension(200, 30));
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterBooks();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterBooks();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterBooks();
+            }
+        });
+
         //Create a JScrollPane for the table
         JScrollPane scrollPane = new JScrollPane(booksTable);
         scrollPane.setPreferredSize(new Dimension(0, 0));
@@ -51,12 +75,19 @@ public class BooksPage extends LibraryDashboard {
 
         //Create a panel to add padding around the JScrollPane
         JPanel tablePanel = new JPanel(new BorderLayout());
-        tablePanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 10, 50));
+        tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 10, 50));
         tablePanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Create a panel to hold the search field with padding
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchPanel.add(new JLabel("Search: "), BorderLayout.WEST);
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 150, 0, 150)); // Add padding around the search panel
 
         //Create buttons to add, remove, and update books
         JPanel buttonPanel = createButtonPanel();
 
+        mainPanel.add(searchPanel, BorderLayout.NORTH);
         mainPanel.add(tablePanel, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -139,6 +170,28 @@ public class BooksPage extends LibraryDashboard {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0)); // 10px padding at the bottom
 
         return buttonPanel;
+    }
+
+    // Add the filterBooks method
+    private void filterBooks() {
+        String query = searchField.getText().toLowerCase();
+        tableModel.setRowCount(0); // Clear the table
+    
+        for (Book book : bookList) {
+            String title = book.getTitle().toLowerCase(); // Convert title to lowercase for comparison
+            String authorName = book.getAuthor() != null ? book.getAuthor().getName().toLowerCase() : ""; // Convert author name to lowercase for comparison
+            
+            // Check if the book matches the search query
+            if (title.contains(query) || authorName.contains(query)) {
+                tableModel.addRow(new Object[]{
+                    book.getTitle(), // Original title
+                    book.getAuthor() != null ? book.getAuthor().getName() : "", // Original author name
+                    book.getISBN(),
+                    book.getPublicationDate(),
+                    book.getAvailableCopies()
+                });
+            }
+        }
     }
 
     //Input dialog for inserting and updating book values
