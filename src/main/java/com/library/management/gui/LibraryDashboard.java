@@ -283,7 +283,7 @@ public class LibraryDashboard extends JFrame {
 
     // Time Update Method
     private void updateTime(JLabel label) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a\nMMM dd, yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a\n MMM dd, yyyy");
         label.setText(dateFormat.format(new Date()));
     }
 
