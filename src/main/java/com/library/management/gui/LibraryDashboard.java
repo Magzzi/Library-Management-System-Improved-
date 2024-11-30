@@ -31,7 +31,8 @@ public class LibraryDashboard extends JFrame {
     // Attributes for Values of Cards
     private JLabel booksListedValueLabel;
     private JLabel authorsListedValueLabel;
-    private JLabel membersListedValueLabel; // Declare membersListedValueLabel
+    private JLabel membersListedValueLabel;
+    private JLabel borrowedBooksListedValueLabel;
     private User user;
     private Library library;
 
@@ -121,7 +122,7 @@ public class LibraryDashboard extends JFrame {
 
         String[][] stats = {
             {"0", "Books Listed", "📚", "#28A745"},
-            {"0", "Times Book Issued", "📑", "#007BFF"},
+            {"0", "Borrowed Books", "📑", "#007BFF"},
             {"0", "Times Books Returned", "♻️", "#FFC107"},
             {"0", "Members Listed", "👤", "#DC3545"},
             {"0", "Authors Listed", "👨‍💻", "#17A2B8"},
@@ -143,7 +144,12 @@ public class LibraryDashboard extends JFrame {
                 membersListedValueLabel = new JLabel(stat[0], SwingConstants.CENTER); // Initialize membersListedValueLabel
                 membersListedValueLabel.setFont(VALUE_FONT);
                 card.add(membersListedValueLabel, BorderLayout.CENTER);
+            } else if (stat[1].equals("Borrowed Books")) {
+                borrowedBooksListedValueLabel = new JLabel(stat[0], SwingConstants.CENTER);
+                borrowedBooksListedValueLabel.setFont(VALUE_FONT);
+                card.add(borrowedBooksListedValueLabel, BorderLayout.CENTER);
             }
+            
             mainPanel.add(card);
         }
 
@@ -331,12 +337,30 @@ public class LibraryDashboard extends JFrame {
         }
         return count;
     }
+
+     // Method to count borrowed books from the database
+     private int getBorrowedBookCountFromDatabase() {
+        int count = 0;
+        String query = "SELECT COUNT(*) FROM BorrowedBooks";
+
+        try (Connection connection = databaseConnection.getConnection(); 
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                count = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); 
+        }
+        return count;
+    }
     
     // Update Book and Author Count for Card Display
     private void updateCounts() {
         updateBookCount();
         updateAuthorCount();
         updateMemberCount();
+        updateBorrowedBooksCount();
     }
 
     // Method to update the author count
@@ -355,5 +379,10 @@ public class LibraryDashboard extends JFrame {
     private void updateMemberCount() {
         int memberCount = getMemberCountFromDatabase(); // Corrected to call getMemberCountFromDatabase
         membersListedValueLabel.setText(String.valueOf(memberCount));
- }
+    }
+
+    private void updateBorrowedBooksCount() {
+        int borrowedBookCount = getBorrowedBookCountFromDatabase();
+        borrowedBooksListedValueLabel.setText(String.valueOf(borrowedBookCount));
+    }    
 }

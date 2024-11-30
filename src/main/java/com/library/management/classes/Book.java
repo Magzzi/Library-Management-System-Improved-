@@ -7,21 +7,41 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Book{
+    private int bookId;
     private String title;
     private Author author;
     private String ISBN;
     private String publicationDate;
     private int availableCopies;
-    int bookId;
+    
 
-    //Constructor
-    public Book(String title, Author author, String ISBN, String publicationDate, int availableCopies){
+    //Constructor for existing books
+    public Book(int bookId, String title, Author author, String ISBN, String publicationDate, int availableCopies){
+        this.bookId = bookId;
         this.title = title;
         this.author = author;
         this.ISBN = ISBN;
         this.publicationDate = publicationDate;
         this.availableCopies = availableCopies;
-        this.bookId = insertBookIntoDatabase();
+    }
+
+    // Constructor for new books
+    public Book(String title, Author author, String ISBN, String publicationDate, int availableCopies) {
+        this.title = title;
+        this.author = author;
+        this.ISBN = ISBN;
+        this.publicationDate = publicationDate;
+        this.availableCopies = availableCopies;
+        this.bookId = -1; // Initially set to -1 since it hasn't been saved to the database yet
+    }
+
+    // Method to save the book to the database
+    public boolean save() {
+        if (this.bookId == -1) { // Only insert if bookId is not set
+            this.bookId = insertBookIntoDatabase();
+            return this.bookId != -1; // Return true if insertion was successful
+        }
+        return true; // Already saved
     }
 
     //Getters
@@ -96,8 +116,6 @@ public class Book{
         updateBookInDatabase();
     }
 
-    
-
     private int insertBookIntoDatabase() {
         try(Connection conn = databaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement
@@ -130,6 +148,21 @@ public class Book{
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error updating book: " + e.getMessage());
+        }
+    }
+
+    // Delete Book and Reset Sequence
+    public void deleteBookFromDatabase() {
+        String deleteBookQuery = "DELETE FROM Books WHERE book_id = ?";
+        String resetSequenceQuery = "UPDATE sqlite_sequence SET seq = (SELECT MAX(book_id) FROM Books) WHERE name = 'Books'";
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement deleteStmt = conn.prepareStatement(deleteBookQuery);
+             PreparedStatement resetStmt = conn.prepareStatement(resetSequenceQuery)) {
+            deleteStmt.setInt(1, bookId);
+            deleteStmt.executeUpdate();
+            resetStmt.executeUpdate();  // Reset the book sequence
+        } catch (SQLException e) {
+            System.err.println("Error deleting book: " + e.getMessage());
         }
     }
 }

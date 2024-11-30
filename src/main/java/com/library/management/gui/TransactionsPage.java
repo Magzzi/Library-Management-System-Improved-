@@ -4,9 +4,7 @@ import com.library.management.classes.Book;
 import com.library.management.classes.Member;
 import com.library.management.classes.User;
 import com.library.management.classes.Library;
-
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -16,7 +14,6 @@ import java.util.List;
 
 public class TransactionsPage extends LibraryDashboard {
     // Static Attributes
-    private static final Color THEME_COLOR = new Color(60, 106, 117);
     private static final Color TABLE_TEXT_COLOR = Color.WHITE;
     private static final Color TABLE_HEADER_COLOR = new Color(60, 106, 117);
     private static final Color TABLE_BACKGROUND_COLOR = new Color(60, 106, 117);
@@ -108,6 +105,7 @@ public class TransactionsPage extends LibraryDashboard {
         comboBox.setBorder(BorderFactory.createLineBorder(TABLE_HEADER_COLOR));
     }
 
+
     // Load books and members from the database
     private void loadBooksAndMembers() {
         if (this.library == null) {
@@ -158,13 +156,13 @@ public class TransactionsPage extends LibraryDashboard {
         }
     }
 
-    // Modify borrowBook to update database and refresh transactions
     private void borrowBook() {
         Book selectedBook = (Book) booksComboBox.getSelectedItem();
         Member selectedMember = (Member) membersComboBox.getSelectedItem();
-
+    
         if (selectedBook != null && selectedMember != null) {
             try {
+                System.out.println("Borrowing book ID: " + selectedBook.getBookId()); // Debugging statement
                 if (library.borrowBook(selectedMember, selectedBook)) {
                     loadTransactionsFromDatabase();
                     JOptionPane.showMessageDialog(this, selectedMember.getName() + " borrowed " + selectedBook.getTitle());
