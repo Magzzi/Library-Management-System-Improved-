@@ -1,6 +1,7 @@
 package com.library.management.gui;
 
 import com.library.management.database.*;
+import com.library.management.classes.Book;
 import com.library.management.classes.Member;
 import com.library.management.classes.User;
 import javax.swing.*;
@@ -99,18 +100,36 @@ public class MembersPage extends LibraryDashboard {
         // Clear the current table model
         tableModel.setRowCount(0);
         
+        // Convert query to lowercase for case-insensitive matching
+        String lowerCaseQuery = query.toLowerCase();
+        
         // Filter the member list based on the search query
         for (Member member : memberList) {
-            String memberName = member.getName().toLowerCase(); // Assuming getName() returns the member's name
-            if (memberName.contains(query.toLowerCase())) {
-                tableModel.addRow(new Object[]{
+            String memberName = member.getName().toLowerCase(); // Convert member's name to lowercase
+            
+            // Check if the member's name contains the search query
+            if (memberName.contains(lowerCaseQuery)) {
+                // Convert the borrowedBooks list to a list of titles
+                List<String> borrowedBookTitles = member.getBorrowedBooks()
+                                                        .stream()
+                                                        .map(Book::getTitle) // Map each book to its title
+                                                        .toList(); // Collect into a list
+                
+                // Create a string representation of borrowed books
+                String borrowedBooks = borrowedBookTitles.isEmpty() 
+                    ? "No borrowed books" // If no books are borrowed
+                    : String.join(", ", borrowedBookTitles); // Join titles with a comma
+    
+                // Add the member's details to the table model
+                tableModel.addRow(new Object[] {
                     member.getMemberId(),
                     member.getName(),
-                    member.getBorrowedBooks()
+                    borrowedBooks // Display borrowed books correctly
                 });
             }
         }
     }
+    
 
     // Create members table
     private JTable createMembersTable() {

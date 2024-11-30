@@ -17,6 +17,17 @@ public class Member extends Person {
         super(name); // Assuming Person has a constructor that accepts name
         this.memberId = memberId;
         this.borrowedBooks = new ArrayList<>();
+        
+        // Populate borrowedBooks from the string
+        if (borrowedBooks != null && !borrowedBooks.isEmpty()) {
+            String[] titles = borrowedBooks.split(", ");
+            for (String title : titles) {
+                Book book = findBookByTitle(title); // You need to implement this method
+                if (book != null) {
+                    this.borrowedBooks.add(book);
+                }
+            }
+        }
     }
 
     public Member(String name) {
