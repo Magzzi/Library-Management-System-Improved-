@@ -119,30 +119,39 @@ END;
 
 ---Insert authors--------------------------------------------------
 INSERT INTO Authors (name) VALUES
-('J.K. Rowling'), ('George R.R. Martin'), ('J.R.R. Tolkien'), 
-('Agatha Christie'), ('Dan Brown'), ('Stephen King'), 
-('Haruki Murakami'), ('Isaac Asimov'), ('Arthur C. Clarke'), 
-('Jane Austen'), ('Charles Dickens'), ('Mark Twain'), 
-('Ernest Hemingway'), ('Leo Tolstoy'), ('F. Scott Fitzgerald');
+('J.K. Rowling'), 
+('George R.R. Martin'), 
+('J.R.R. Tolkien'), 
+('Agatha Christie'), 
+('Dan Brown'), 
+('Stephen King'), 
+('Haruki Murakami'), 
+('Isaac Asimov'), 
+('Arthur C. Clarke'), 
+('Jane Austen'), 
+('Charles Dickens'), 
+('Mark Twain'), 
+('Ernest Hemingway'), 
+('Leo Tolstoy'), 
+('F. Scott Fitzgerald');
 
 ---Insert books with valid author_id-------------------------------
 INSERT INTO Books (title, author_id, ISBN, publication_date, available_copies) VALUES
-('Harry Potter and the Sorcerers Stone', 1, '9780747532743', '1997-06-26', 10),
-('A Game of Thrones', 2, '9780553103540', '1996-08-06', 5),
-('The Hobbit', 3, '9780007458424', '1937-09-21', 8),
-('Murder on the Orient Express', 4, '9780062693662', '1934-01-01', 6),
-('The Da Vinci Code', 5, '9780385504201', '2003-03-18', 12),
-('The Shining', 6, '9780307743657', '1977-01-28', 4),
-('Norwegian Wood', 7, '9780375704024', '1987-09-04', 9),
-('Foundation', 8, '9780553293357', '1951-06-01', 7),
-('2001: A Space Odyssey', 9, '9780451457998', '1968-06-01', 5),
-('Pride and Prejudice', 10, '9780141040349', '1813-01-28', 15),
-('Oliver Twist', 11, '9780199536195', '1837-02-01', 7),
-('The Adventures of Huckleberry Finn', 12, '9780486280615', '1884-12-10', 6),
-('The Old Man and the Sea', 13, '9780684801223', '1952-09-01', 4),
-('War and Peace', 14, '9780307266934', '1869-03-01', 3),
-('The Great Gatsby', 15, '9780743273565', '1925-04-10', 10),
-('Harry Potter and the Sorcerers Stone', 16, '9780747532747', '1997-06-26', 10);
+('Harry Potter and the Sorcerers Stone', 1, '1001', '1997-06-26', 10),
+('A Game of Thrones', 2, '1002', '1996-08-06', 5),
+('The Hobbit', 3, '1003', '1937-09-21', 8),
+('Murder on the Orient Express', 4, '1004', '1934-01-01', 6),
+('The Da Vinci Code', 5, '1005', '2003-03-18', 12),
+('The Shining', 6, '1006', '1977-01-28', 4),
+('Norwegian Wood', 7, '1007', '1987-09-04', 9),
+('Foundation', 8, '1008', '1951-06-01', 7),
+('2001: A Space Odyssey', 9, '1009', '1968-06-01', 5),
+('Pride and Prejudice', 10, '1010', '1813-01-28', 15),
+('Oliver Twist', 11, '1011', '1837-02-01', 7),
+('The Adventures of Huckleberry Finn', 12, '1012', '1884-12-10', 6),
+('The Old Man and the Sea', 13, '1013', '1952-09-01', 4),
+('War and Peace', 14, '1014', '1869-03-01', 3),
+('The Great Gatsby', 15, '1015', '1925-04-10', 10);
 
 ---Members Data-----------------------------------------------------
 INSERT INTO members (member_name) VALUES
@@ -164,26 +173,16 @@ INSERT INTO members (member_name) VALUES
 
 ---Users Data-------------------------------------------------------
 INSERT INTO users (username, password) VALUES
-('john_doe', 'password123'),
-('jane_smith', 'mypassword'),
-('mike_johnson', '123456'),
-('emily_davis', 'emily123'),
-('chris_brown', 'chris321'),
-('laura_wilson', 'laura789'),
-('david_moore', 'davem123'),
-('sarah_taylor', 'sarah456'),
-('daniel_harris', 'daniel789'),
-('jessica_lee', 'jessica123'),
-('matthew_clark', 'matt321'),
-('samantha_lewis', 'sam234'),
-('william_young', 'william2024'),
-('olivia_walker', 'olivia111'),
-('james_hall', 'jamespass');
+('admin', '123'),
+('eron', '123'),
+('paul', '123'),
+('zio', '123'),
+('jules', '123');
 
 ---BorrowedBooks Data------------------------------------------------
 INSERT INTO BorrowedBooks (member_id, book_id, borrow_date, return_date) VALUES
 (1, 1, '2024-10-01', '2024-10-15'),
-(1, 2, '2024-10-01', '2024-10-15'),  -- John Doe borrowed 2 books
+(1, 2, '2024-10-01', '2024-10-15'),  
 (2, 2, '2024-10-05', '2024-10-19'),
 (3, 3, '2024-10-10', '2024-10-24'),
 (4, 4, '2024-10-12', '2024-10-26'),

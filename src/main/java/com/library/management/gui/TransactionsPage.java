@@ -5,6 +5,7 @@ import com.library.management.classes.Member;
 import com.library.management.classes.User;
 import com.library.management.classes.Library;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -222,10 +223,15 @@ public class TransactionsPage extends LibraryDashboard {
                 return c;
             }
         };
-        table.setFillsViewportHeight(true);
+        // Set table color
         table.getTableHeader().setBackground(TABLE_HEADER_COLOR);
         table.getTableHeader().setForeground(TABLE_TEXT_COLOR);
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
+        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
+        table.setFont(new Font("Arial", Font.PLAIN, 16));
+        table.setRowHeight(30);
+        table.getTableHeader().setBorder(new LineBorder(Color.BLACK, 1));
+        table.setBackground(TABLE_BACKGROUND_COLOR);
+        table.setForeground(TABLE_TEXT_COLOR);
         return table;
     }
 }

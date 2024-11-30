@@ -231,10 +231,16 @@ public class MembersPage extends LibraryDashboard {
         if (validateInputs()) {
             String name = inputFields.get(0).getText();
             Member newMember = new Member(name);
-            memberList.add(newMember);
-            tableModel.addRow(new Object[]{name});
-            insertMemberIntoDatabase(newMember);
-            clearFields();
+            int generatedId = insertMemberIntoDatabase(newMember); // Get the generated ID
+            
+            if (generatedId != -1) { // Check if the insertion was successful
+                newMember.setMemberId(generatedId); // Set the generated member ID
+                memberList.add(newMember);
+                tableModel.addRow(new Object[]{generatedId, name, "No borrowed books"}); // Add member data to the table
+                clearFields();
+            } else {
+                showError("Failed to add member to the database.");
+            }
         }
     }
 
@@ -299,15 +305,22 @@ public class MembersPage extends LibraryDashboard {
     }
 
     // Database Methods
-    private void insertMemberIntoDatabase(Member member) {
+    private int insertMemberIntoDatabase(Member member) {
         String sql = "INSERT INTO members (member_name) VALUES (?)";
-        try (Connection conn = databaseConnection.getConnection(); // Assuming you have a method to get a DB connection
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, member.getName());
             pstmt.executeUpdate();
+            
+            // Retrieve the generated member ID
+            ResultSet generatedKeys = pstmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1); // Return the generated member ID
+            }
         } catch (SQLException e) {
             showError("Error adding member to database: " + e.getMessage());
         }
+        return -1; // Return -1 if an error occurred
     }
 
     private void updateMemberInDatabase(Member member) {
