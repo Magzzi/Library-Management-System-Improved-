@@ -17,21 +17,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BooksPage extends LibraryDashboard {
-    //Static Attributes
+    // Static Attributes
     private static final Color THEME_COLOR = new Color(60, 106, 117);
     private static final Color DARKER_THEME_COLOR = Color.BLACK;
     private static final Color TABLE_TEXT_COLOR = Color.WHITE;
     private static final Color TABLE_HEADER_COLOR = new Color(60, 106, 117);
     private static final Color TABLE_BACKGROUND_COLOR = new Color(60, 106, 117);
 
-    //Attributes
+    // Attributes
     private JTable booksTable;
     private DefaultTableModel tableModel;
     private List<Book> bookList;
     private List<JTextField> inputFields;
     private JTextField searchField;
 
-    //Constructor
+    // Constructor
     public BooksPage(User user) {
         super(user);
         bookList = new ArrayList<>();
@@ -41,7 +41,7 @@ public class BooksPage extends LibraryDashboard {
         setVisible(true);
     }
 
-    //GUI SET UP METHODS
+    // GUI SET UP METHODS
     private void setupUI() {
         JPanel mainPanel = new JPanel(new BorderLayout());
         String[] columnNames = {"Title", "Author", "ISBN", "Publication Date", "Available Copies"};
@@ -68,24 +68,25 @@ public class BooksPage extends LibraryDashboard {
                 filterBooks();
             }
         });
-
-        //Create a JScrollPane for the table
-        JScrollPane scrollPane = new JScrollPane(booksTable);
-        scrollPane.setPreferredSize(new Dimension(0, 0));
-        scrollPane.setMaximumSize(new Dimension((int) (Toolkit.getDefaultToolkit().getScreenSize().width * 0.5), Integer.MAX_VALUE));
-
-        //Create a panel to add padding around the JScrollPane
-        JPanel tablePanel = new JPanel(new BorderLayout());
-        tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 10, 50));
-        tablePanel.add(scrollPane, BorderLayout.CENTER);
-
+        
         // Create a panel to hold the search field with padding
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.add(new JLabel("Search: "), BorderLayout.WEST);
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 150, 0, 150)); // Add padding around the search panel
 
-        //Create buttons to add, remove, and update books
+        // Create a JScrollPane for the table
+        JScrollPane scrollPane = new JScrollPane(booksTable);
+        scrollPane.setPreferredSize(new Dimension(0, 0));
+        scrollPane.setMaximumSize(new Dimension((int) (Toolkit.getDefaultToolkit().getScreenSize().width * 0.5), Integer.MAX_VALUE));
+
+        // Create a panel to add padding around the JScrollPane
+        JPanel tablePanel = new JPanel(new BorderLayout());
+        tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 10, 50));
+        tablePanel.add(scrollPane, BorderLayout.CENTER);
+
+        
+        // Create buttons to add, remove, and update books
         JPanel buttonPanel = createButtonPanel();
 
         mainPanel.add(searchPanel, BorderLayout.NORTH);
@@ -95,7 +96,7 @@ public class BooksPage extends LibraryDashboard {
         add(mainPanel, BorderLayout.CENTER);
     }
 
-    //Create books table
+    // Create books table
     private JTable createBooksTable() {
         JTable table = new JTable(tableModel) {
             @Override
@@ -114,17 +115,17 @@ public class BooksPage extends LibraryDashboard {
         // Set table color
         table.getTableHeader().setBackground(TABLE_HEADER_COLOR);
         table.getTableHeader().setForeground(TABLE_TEXT_COLOR);
-        
+
         // Set font size for the table header
         Font headerFont = new Font("Arial", Font.BOLD, 18); // Change 16 to your desired font size
         table.getTableHeader().setFont(headerFont);
-        
+
         // Set font size for the table
-        Font tableFont = new Font("Arial", Font.PLAIN, 16); // Change 14 to your desired font size
+        Font tableFont = new Font("Arial", Font.PLAIN , 16); // Change 14 to your desired font size
         table.setFont(tableFont);
 
         table.setRowHeight(30);
-        
+
         table.getTableHeader().setBorder(new LineBorder(DARKER_THEME_COLOR, 1));
         table.setBackground(TABLE_BACKGROUND_COLOR);
         table.setForeground(TABLE_TEXT_COLOR);
@@ -132,23 +133,23 @@ public class BooksPage extends LibraryDashboard {
         return table;
     }
 
-    //Create Custom Button Panel
+    // Create Custom Button Panel
     private JPanel createButtonPanel() {
-        //Create buttons
+        // Create buttons
         JButton addButton = new JButton("Add Book");
         JButton removeButton = new JButton("Remove Book");
         JButton updateButton = new JButton("Update Book");
 
-        //Set common properties for all buttons
+        // Set common properties for all buttons
         for (JButton button : new JButton[]{addButton, removeButton, updateButton}) {
             button.setBackground(THEME_COLOR);
             button.setForeground(Color.WHITE);
             button.setPreferredSize(new Dimension(120, 40));
-            button.setMinimumSize(new Dimension(120, 40)); 
-            button.setMaximumSize(new Dimension(120, 40)); 
+            button.setMinimumSize(new Dimension(120, 40));
+            button.setMaximumSize(new Dimension(120, 40));
         }
 
-        //Add action listeners
+        // Add action listeners
         addButton.addActionListener(e -> showBookInputDialog("Add", null, THEME_COLOR, DARKER_THEME_COLOR));
         removeButton.addActionListener(e -> removeBook());
         updateButton.addActionListener(e -> {
@@ -161,7 +162,7 @@ public class BooksPage extends LibraryDashboard {
             }
         });
 
-        //Create button panel and add buttons
+        // Create button panel and add buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addButton);
         buttonPanel.add(removeButton);
@@ -173,29 +174,7 @@ public class BooksPage extends LibraryDashboard {
         return buttonPanel;
     }
 
-    // Add the filterBooks method
-    private void filterBooks() {
-        String query = searchField.getText().toLowerCase();
-        tableModel.setRowCount(0); // Clear the table
-    
-        for (Book book : bookList) {
-            String title = book.getTitle().toLowerCase(); // Convert title to lowercase for comparison
-            String authorName = book.getAuthor() != null ? book.getAuthor().getName().toLowerCase() : ""; // Convert author name to lowercase for comparison
-            
-            // Check if the book matches the search query
-            if (title.contains(query) || authorName.contains(query)) {
-                tableModel.addRow(new Object[]{
-                    book.getTitle(), // Original title
-                    book.getAuthor() != null ? book.getAuthor().getName() : "", // Original author name
-                    book.getISBN(),
-                    book.getPublicationDate(),
-                    book.getAvailableCopies()
-                });
-            }
-        }
-    }
-
-    //Input dialog for inserting and updating book values
+    // Input dialog for inserting and updating book values
     private void showBookInputDialog(String action, Book book, Color themeColor, Color darkerThemeColor) {
         JDialog dialog = new JDialog(this, action + " Book", true);
         dialog.setLayout(new GridBagLayout());
@@ -255,27 +234,29 @@ public class BooksPage extends LibraryDashboard {
         dialog.setVisible(true);
     }
 
-    //Input Validation Methods
-    private boolean validateInputs() {
-        try {
-            String title = inputFields.get(0).getText();
-            String authorName = inputFields.get(1).getText();
-            String isbn = inputFields.get(2).getText();
-            String pubDate = inputFields.get(3).getText();
-            int availableCopies = Integer.parseInt(inputFields.get(4).getText());
+    // Add the filterBooks method
+    private void filterBooks() {
+        String query = searchField.getText().toLowerCase();
+        tableModel.setRowCount(0); // Clear the table
 
-            if (title.isEmpty() || authorName.isEmpty() || isbn.isEmpty() || pubDate.isEmpty() || availableCopies < 0) {
-                showError("Please fill in all fields correctly");
-                return false;
+        for (Book book : bookList) {
+            String title = book.getTitle().toLowerCase(); // Convert title to lowercase for comparison
+            String authorName = book.getAuthor() != null ? book.getAuthor().getName().toLowerCase() : ""; // Convert author name to lowercase for comparison
+
+            // Check if the book matches the search query
+            if (title.contains(query) || authorName.contains(query)) {
+                tableModel.addRow(new Object[]{
+                    book.getTitle(), // Original title
+                    book.getAuthor() != null ? book.getAuthor().getName() : "", // Original author name
+                    book.getISBN(),
+                    book.getPublicationDate(),
+                    book.getAvailableCopies()
+                });
             }
-            return true;
-        } catch (NumberFormatException e) {
-            showError("Please enter valid numbers for available copies");
-            return false;
         }
     }
 
-    //Database Methods
+    // Database Methods
     private void loadBooksFromDatabase() {
         String query = "SELECT b.book_id, b.title, b.author_id, b.ISBN, b.publication_date, b.available_copies, a.name AS author_name " +
                        "FROM Books b " +
@@ -302,7 +283,7 @@ public class BooksPage extends LibraryDashboard {
         }
     }
 
-    //Add book to database/Table Output
+    // Add book to database/Table Output
     private void addBook() {
         if (validateInputs()) {
             try (Connection connection = databaseConnection.getConnection()) {
@@ -313,7 +294,7 @@ public class BooksPage extends LibraryDashboard {
                 insertBookToDatabase(connection, newBook, authorId);
                 connection.commit();
 
-                bookList .add(newBook);
+                bookList.add(newBook);
                 tableModel.addRow(new Object[]{
                     newBook.getTitle(),
                     authorName,
@@ -330,7 +311,7 @@ public class BooksPage extends LibraryDashboard {
         }
     }
 
-    //Create Book Values from User Input
+    // Create Book Values from User Input
     private Book createBookFromInputs() {
         String title = inputFields.get(0).getText();
         String authorName = inputFields.get(1).getText();
@@ -342,7 +323,7 @@ public class BooksPage extends LibraryDashboard {
         return new Book(title, author, isbn, pubDate, availableCopies);
     }
 
-    //Insert Author into Database
+    // Insert Author into Database
     private int insertAuthor(Connection connection, String authorName) throws SQLException {
         String checkAuthorQuery = "SELECT author_id FROM Authors WHERE name = ?";
         try (PreparedStatement checkStmt = connection.prepareStatement(checkAuthorQuery)) {
@@ -353,7 +334,7 @@ public class BooksPage extends LibraryDashboard {
                 }
             }
         }
-        
+
         String insertAuthorQuery = "INSERT INTO Authors (name) VALUES (?)";
         try (PreparedStatement pstmt = connection.prepareStatement(insertAuthorQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, authorName);
@@ -369,10 +350,10 @@ public class BooksPage extends LibraryDashboard {
         }
     }
 
-    //Insert Book into Database
+    // Insert Book into Database
     private void insertBookToDatabase(Connection connection, Book book, int authorId) throws SQLException {
         String insertBookQuery = "INSERT INTO Books (title, author_id, ISBN, publication_date, available_copies) VALUES (?, ?, ?, ?, ?)";
-        
+
         try (PreparedStatement pstmt = connection.prepareStatement(insertBookQuery)) {
             pstmt.setString(1, book.getTitle());
             pstmt.setInt(2, authorId);
@@ -383,8 +364,8 @@ public class BooksPage extends LibraryDashboard {
         }
     }
 
-    //Update Book into Output Table
-    private void updateBook(Book book) {
+    // Update Book into Output Table
+    private void updateBook (Book book) {
         int selectedRow = booksTable.getSelectedRow();
         if (selectedRow != -1 && validateInputs()) {
             try (Connection connection = databaseConnection.getConnection()) {
@@ -411,7 +392,7 @@ public class BooksPage extends LibraryDashboard {
         }
     }
 
-    //Update Book In Database
+    // Update Book In Database
     private void updateBookInDatabase(Connection connection, Book book, String authorName, int selectedRow) throws SQLException {
         String updateBookQuery = "UPDATE Books SET title = ?, author_id = ?, ISBN = ?, publication_date = ?, available_copies = ? WHERE book_id = ?";
 
@@ -429,7 +410,7 @@ public class BooksPage extends LibraryDashboard {
         }
     }
 
-    //Remove Book from Database/Table Output
+    // Remove Book from Database/Table Output
     private void removeBook() {
         int selectedRow = booksTable.getSelectedRow();
         if (selectedRow != -1) {
@@ -452,18 +433,18 @@ public class BooksPage extends LibraryDashboard {
         }
     }
 
-    //Find Book Id
+    // Find Book Id
     private int getBookIdFromRow(int selectedRow) throws SQLException {
         String title = (String) tableModel.getValueAt(selectedRow, 0);
         String isbn = (String) tableModel.getValueAt(selectedRow, 2);
-        
+
         String query = "SELECT book_id FROM Books WHERE title = ? AND ISBN = ?";
         try (Connection connection = databaseConnection.getConnection();
              PreparedStatement pstmt = connection.prepareStatement(query)) {
-            
+
             pstmt.setString(1, title);
             pstmt.setString(2, isbn);
-            
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("book_id");
@@ -474,7 +455,7 @@ public class BooksPage extends LibraryDashboard {
         }
     }
 
-    //Utility Methods
+    // Utility Methods
     private void clearFields() {
         for (JTextField field : inputFields) {
             field.setText("");
@@ -483,5 +464,25 @@ public class BooksPage extends LibraryDashboard {
 
     private void showError(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    // Input Validation Methods
+    private boolean validateInputs() {
+        try {
+            String title = inputFields.get(0).getText();
+            String authorName = inputFields.get(1).getText();
+            String isbn = inputFields.get(2).getText();
+            String pubDate = inputFields.get(3).getText();
+            int availableCopies = Integer.parseInt(inputFields.get(4).getText());
+
+            if (title.isEmpty() || authorName.isEmpty() || isbn.isEmpty() || pubDate.isEmpty() || availableCopies < 0) {
+                showError("Please fill in all fields correctly");
+                return false;
+            }
+            return true;
+        } catch (NumberFormatException e) {
+            showError("Please enter valid numbers for available copies");
+            return false;
+        }
     }
 }

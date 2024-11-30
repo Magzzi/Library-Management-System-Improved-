@@ -1,4 +1,5 @@
 package com.library.management.gui;
+
 import com.library.management.database.*;
 import com.library.management.classes.*;
 import javax.swing.*;
@@ -8,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class LibraryLogin extends JFrame {
-    //Static Attributes
+    // Static Attributes
     private static final Color TITLE_COLOR = new Color(60, 106, 117);
     private static final Color BACKGROUND_COLOR = new Color(47, 54, 64);
     private static final Color INPUT_BACKGROUND_COLOR = Color.WHITE;
@@ -17,11 +18,11 @@ public class LibraryLogin extends JFrame {
     private static final Font TITLE_FONT = new Font("Roboto", Font.BOLD, 36);
     private static final Font BUTTON_FONT = new Font("Roboto", Font.BOLD, 14);
 
-    //Attributes for Input fields of username and password
+    // Attributes for Input fields of username and password
     private JTextField usernameField;
     private JPasswordField passwordField;
 
-    //Constructor
+    // Constructor
     public LibraryLogin() {
         setupFrame();
         JPanel mainPanel = createMainPanel();
@@ -29,7 +30,7 @@ public class LibraryLogin extends JFrame {
         setVisible(true);
     }
 
-    //Frame
+    // Frame setup
     private void setupFrame() {
         setTitle("Library Book Reservation Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -38,7 +39,7 @@ public class LibraryLogin extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    //Main Panel
+    // Main Panel
     private JPanel createMainPanel() {
         JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBackground(BACKGROUND_COLOR);
@@ -48,12 +49,12 @@ public class LibraryLogin extends JFrame {
         GridBagConstraints gbc = createGbc(0, 0, 1.0, 0.3);
         mainPanel.add(titlePanel, gbc);
 
-        //Add Input Container
+        // Add Input Container
         JPanel inputContainer = createInputContainer();
         gbc = createGbc(0, 1, 1.0, 0.6);
         mainPanel.add(inputContainer, gbc);
 
-        //Add Close Button
+        // Add Close Button
         JButton closeButton = createButton("CLOSE", e -> System.exit(0));
         gbc = createGbc(0, 2, 1.0, 0.1);
         gbc.anchor = GridBagConstraints.EAST;
@@ -62,14 +63,14 @@ public class LibraryLogin extends JFrame {
         return mainPanel;
     }
 
-    //Create Title Panel
+    // Create Title Panel
     private JPanel createTitlePanel() {
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.setBackground(TITLE_COLOR);
         titlePanel.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width, 
-        (int) (Toolkit.getDefaultToolkit().getScreenSize().height * 0.3)));
+                (int) (Toolkit.getDefaultToolkit().getScreenSize().height * 0.3)));
 
-        //Title Label
+        // Title Label
         JLabel titleLabel = new JLabel("LIBRARY MANAGEMENT SYSTEM", JLabel.CENTER);
         titleLabel.setFont(TITLE_FONT);
         titleLabel.setForeground(Color.WHITE);
@@ -78,7 +79,7 @@ public class LibraryLogin extends JFrame {
         return titlePanel;
     }
 
-    //Create Input Container
+    // Create Input Container
     private JPanel createInputContainer() { 
         JPanel inputContainer = new JPanel(new GridBagLayout());
         inputContainer.setBackground(INPUT_BACKGROUND_COLOR);
@@ -88,22 +89,14 @@ public class LibraryLogin extends JFrame {
         gbc.insets = new Insets(15, 0, 15, 15);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        //Username
+        // Username
         usernameField = new JTextField(20);
         addInputField(inputContainer, gbc, "Username:", usernameField);
         
-        //Password
+        // Password
         passwordField = new JPasswordField(20);
         addInputField(inputContainer, gbc, "Password:", passwordField);
 
-        //Forgot Password
-        // JLabel forgotPasswordLabel = createLabel("Forgot password?", new Color(100, 100, 100));
-        // gbc.gridx = 1;
-        // gbc.gridy = 2;
-        // gbc.anchor = GridBagConstraints.WEST;
-        // inputContainer.add(forgotPasswordLabel, gbc);
-
-        //Sign-In Button
         // Sign-In Button
         JButton signInButton = createButton("SIGN IN", e -> {
             String username = usernameField.getText();
@@ -126,7 +119,7 @@ public class LibraryLogin extends JFrame {
                         } else {
                             JOptionPane.showMessageDialog(LibraryLogin.this, "Invalid username or password", "Login Error", JOptionPane.ERROR_MESSAGE);
                         }
-                    } catch (Exception ex) {
+                    } catch (Exception ex ) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(LibraryLogin.this, "An error occurred during login", "Login Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -139,7 +132,7 @@ public class LibraryLogin extends JFrame {
         gbc.gridy = 3;
         inputContainer.add(signInButton, gbc);
 
-        //Sign-Up Button
+        // Sign-Up Button
         JButton signUpButton = createButton("SIGN UP", e -> openSignUpDialog());
         gbc.gridy = 4;
         inputContainer.add(signUpButton, gbc);
@@ -147,8 +140,8 @@ public class LibraryLogin extends JFrame {
         return inputContainer;
     }
 
-    //Custom Input Field Design
-    private void addInputField(JPanel panel, GridBagConstraints gbc , String labelText, JTextField textField) {
+    // Custom Input Field Design
+    private void addInputField(JPanel panel, GridBagConstraints gbc, String labelText, JTextField textField) {
         gbc.gridx = 0;
         gbc.gridy = panel.getComponentCount() / 2;
         JLabel label = createLabel(labelText, new Color(80, 80, 80));
@@ -162,14 +155,14 @@ public class LibraryLogin extends JFrame {
         panel.add(textField, gbc);
     }   
 
-    //Custom Label Design
+    // Custom Label Design
     private JLabel createLabel(String text, Color color) {
         JLabel label = new JLabel(text);
         label.setForeground(color);
         return label;
     }
 
-    //Custom Button Design
+    // Custom Button Design
     private JButton createButton(String text, java.awt.event.ActionListener action) {
         JButton button = new JButton(text);
         button.setBackground(BUTTON_COLOR);
@@ -183,7 +176,7 @@ public class LibraryLogin extends JFrame {
         return button;
     }
 
-    //GridBag 
+    // GridBag Constraints
     private GridBagConstraints createGbc(int gridx, int gridy, double weightx, double weighty) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gridx;
@@ -194,9 +187,9 @@ public class LibraryLogin extends JFrame {
         return gbc;
     }
 
-    //SignUp Dialog For User Register
+    // Sign-Up Dialog For User Registration
     private void openSignUpDialog() {
-        //Setup
+        // Setup
         JDialog signUpDialog = new JDialog(this, "Sign Up", true);
         signUpDialog.setLayout(new GridBagLayout());
         signUpDialog.setSize(400, 200);
@@ -217,32 +210,32 @@ public class LibraryLogin extends JFrame {
             }
         });
     
-        //Layout for the dialog
+        // Layout for the dialog
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
-        //Username Label
+        // Username Label
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1; 
         signUpDialog.add(createLabel("Username:", Color.BLACK), gbc);
-        //Username Field
+        // Username Field
         gbc.gridx = 1;
         gbc.gridwidth = 19;
         signUpDialog.add(newUsernameField, gbc);
     
-        //Password label
+        // Password Label
         gbc.gridx = 0;
         gbc.gridy = 1; 
         gbc.gridwidth = 1; 
         signUpDialog.add(createLabel("Password:", Color.BLACK), gbc);
-        //Password Field
+        // Password Field
         gbc.gridx = 1;
         gbc.gridwidth = 19; 
         signUpDialog.add(newPasswordField, gbc);
     
-        //Register button
+        // Register Button
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 20;
@@ -251,9 +244,10 @@ public class LibraryLogin extends JFrame {
         signUpDialog.setVisible(true);
     }
 
-    //Register User -> Database 
-    private boolean registerUser (String username, String password) {
-        //SQL Insert User Registration Data
+    // Register User -> Database 
+    private boolean registerUser (String username, String password)
+    {
+        // SQL Insert User Registration Data
         String query = "INSERT INTO users (username, password) VALUES (?, ?)";
 
         try (Connection connection = databaseConnection.getConnection();

@@ -19,7 +19,6 @@ public class TransactionsPage extends LibraryDashboard {
     private static final Color TABLE_HEADER_COLOR = new Color(60, 106, 117);
     private static final Color TABLE_BACKGROUND_COLOR = new Color(60, 106, 117);
     private static final Color BUTTON_COLOR = new Color(80, 120, 130);
-    private static final Color COMBOBOX_COLOR = new Color(240, 240, 240);
     
     // Attributes
     private JComboBox<Book> booksComboBox;
@@ -64,6 +63,10 @@ public class TransactionsPage extends LibraryDashboard {
         customizeComboBox(booksComboBox);
         customizeComboBox(membersComboBox);
 
+        // Set preferred size to adjust height
+        booksComboBox.setPreferredSize(new Dimension(350, 30)); // Adjust width and height as needed
+        membersComboBox.setPreferredSize(new Dimension(250, 30)); // Adjust width and height as needed
+
         // Create buttons for borrowing and returning books
         JButton borrowButton = createCustomButton("Borrow Book");
         borrowButton.addActionListener(e -> borrowBook());
@@ -80,7 +83,7 @@ public class TransactionsPage extends LibraryDashboard {
         transactionPanel.add(returnButton);
 
         // Create a table for displaying transactions
-        String[] columnNames = {"Transaction Type", "Member", "Book", "Date"};
+        String[] columnNames = {"Transaction ID", "Member", "Borrowed Book", "Date"};
         tableModel = new DefaultTableModel(columnNames, 0);
         transactionsTable = createTransactionsTable();
 
@@ -91,7 +94,7 @@ public class TransactionsPage extends LibraryDashboard {
 
         // Create a panel to add padding around the JScrollPane
         JPanel tablePanel = new JPanel(new BorderLayout());
-        tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 10, 50));
+        tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 50, 50));
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         mainPanel.add(transactionPanel, BorderLayout.NORTH);
@@ -101,11 +104,9 @@ public class TransactionsPage extends LibraryDashboard {
 
     // Customize JComboBox appearance
     private void customizeComboBox(JComboBox<?> comboBox) {
-        comboBox.setBackground(COMBOBOX_COLOR);
+        comboBox.setBackground(Color.WHITE);
         comboBox.setForeground(Color.BLACK);
-        comboBox.setBorder(BorderFactory.createLineBorder(TABLE_HEADER_COLOR));
     }
-
 
     // Load books and members from the database
     private void loadBooksAndMembers() {
@@ -127,7 +128,7 @@ public class TransactionsPage extends LibraryDashboard {
                 membersComboBox.addItem(member);
                 memberList.add(member);
             }
-        } catch (SQLException e) {
+        } catch (SQLException e){ 
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "An unexpected error occurred: " + e.getMessage());
         }
@@ -157,6 +158,7 @@ public class TransactionsPage extends LibraryDashboard {
         }
     }
 
+    // Borrow a book
     private void borrowBook() {
         Book selectedBook = (Book) booksComboBox.getSelectedItem();
         Member selectedMember = (Member) membersComboBox.getSelectedItem();
@@ -178,7 +180,7 @@ public class TransactionsPage extends LibraryDashboard {
         }
     }
 
-    // Modify returnBook to update database and refresh transactions
+    // Return a book
     private void returnBook() {
         Book selectedBook = (Book) booksComboBox.getSelectedItem();
         Member selectedMember = (Member) membersComboBox.getSelectedItem();

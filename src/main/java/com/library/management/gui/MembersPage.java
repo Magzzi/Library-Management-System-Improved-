@@ -67,7 +67,7 @@ public class MembersPage extends LibraryDashboard {
             public void changedUpdate(DocumentEvent e) {
                 filterMembers(searchField.getText());
             }
-        }); 
+        });
 
         // Create a panel to hold the search field
         JPanel searchPanel = new JPanel(new BorderLayout());
@@ -211,7 +211,7 @@ public class MembersPage extends LibraryDashboard {
             if (validateInputs()) {
                 if (action.equals("Add")) {
                     addMember();
-                } else if (action.equals("Update")){
+                } else if (action.equals("Update")) {
                     updateMember(member);
                 }
                 dialog.dispose();
@@ -243,27 +243,28 @@ public class MembersPage extends LibraryDashboard {
         return true;
     }
 
+    // Database Methods
     private void loadMembersFromDatabase() {
         String sql = "SELECT m.member_id, m.member_name, GROUP_CONCAT(b.title, ', ') AS borrowed_books " +
                      "FROM members m " +
                      "LEFT JOIN BorrowedBooks bb ON m.member_id = bb.member_id " +
                      "LEFT JOIN Books b ON bb.book_id = b.book_id " +
                      "GROUP BY m.member_id, m.member_name"; // Updated query to include borrowed books
-    
+
         try (Connection conn = databaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
-    
+
             while (rs.next()) {
                 int memberId = rs.getInt("member_id");
                 String memberName = rs.getString("member_name");
                 String borrowedBooks = rs.getString("borrowed_books");
-    
+
                 // Handle case where no books are borrowed (borrowedBooks could be null)
                 if (borrowedBooks == null) {
                     borrowedBooks = "No borrowed books";
                 }
-    
+
                 // Create Member and display in the table
                 memberList.add(new Member(memberId, memberName, borrowedBooks));
                 tableModel.addRow(new Object[]{memberId, memberName, borrowedBooks}); // Add member data to the table
@@ -297,7 +298,7 @@ public class MembersPage extends LibraryDashboard {
         if (selectedRow != -1) {
             String name = inputFields.get(0).getText();
             memberList.get(selectedRow).setName(name); // Assuming setName method exists in Member class
-            tableModel.setValueAt(name, selectedRow, 0);
+            tableModel.setValueAt(name, selectedRow, 1);
             updateMemberInDatabase(member);
             clearFields();
         } else {
@@ -310,25 +311,25 @@ public class MembersPage extends LibraryDashboard {
         int selectedRow = membersTable.getSelectedRow(); // Get the selected row
         if (selectedRow != -1) {
             Member memberToRemove = memberList.get(selectedRow); // Get the member object
-    
+
             // Confirm deletion from the user
             int confirm = JOptionPane.showConfirmDialog(
                 this, "Are you sure you want to remove the member: " + memberToRemove.getName() + "?",
                 "Confirm Delete",
                 JOptionPane.YES_NO_OPTION
             );
-        
+
             if (confirm == JOptionPane.YES_OPTION) {
                 // Remove from database
                 if (removeMemberFromDatabase(memberToRemove)) {
                     // If successful, remove from list and table
-                        memberList.remove(selectedRow);
-                        tableModel.removeRow(selectedRow); // Remove from JTable
-                        JOptionPane.showMessageDialog(this, "Member removed successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    memberList.remove(selectedRow);
+                    tableModel.removeRow(selectedRow); // Remove from JTable
+                    JOptionPane.showMessageDialog(this, "Member removed successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 }
-            } else {
-                showError("Please select a member to remove.");
             }
+        } else {
+            showError("Please select a member to remove.");
         }
     }
 
@@ -338,9 +339,8 @@ public class MembersPage extends LibraryDashboard {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, memberToRemove.getMemberId()); // Set the member_id parameter
             int rowsDeleted = pstmt.executeUpdate();
-    
+
             if (rowsDeleted > 0) {
-                JOptionPane.showMessageDialog(this, "Member removed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 return true;
             } else {
                 showError("No member found with the given ID.");
@@ -377,13 +377,13 @@ public class MembersPage extends LibraryDashboard {
             pstmt.setString(1, member.getName()); // Set the new name
             pstmt.setInt(2, member.getMemberId()); // Identify the record by member_id
             int rowsUpdated = pstmt.executeUpdate();
-    
+
             if (rowsUpdated > 0) {
                 JOptionPane.showMessageDialog(this, "Member updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 showError("No member found with the given ID.");
             }
-        } catch (SQLException e) {
+        } catch (SQLException e){
             showError("Error updating member in database: " + e.getMessage());
         }
     }
