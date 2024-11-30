@@ -33,13 +33,13 @@ public class LibraryDashboard extends JFrame {
     private JLabel authorsListedValueLabel;
     private JLabel membersListedValueLabel;
     private JLabel borrowedBooksListedValueLabel;
+
+    // Attributes for parameters
     private User user;
-    private Library library;
 
     // Constructor
-    public LibraryDashboard(User user, Library library) {
+    public LibraryDashboard(User user) {
         this.user = user;
-        this.library = library;
         setupFrame();
         JPanel topBar = createTopBar(user);
         JPanel sidebar = createSidebar();
@@ -127,7 +127,6 @@ public class LibraryDashboard extends JFrame {
             {"0", "Members Listed", "👨‍💻", "#17A2B8"},
         };
 
-        // Logic for Changing The Number of Card Values
         for (String[] stat : stats) {
             JPanel card = createCard(stat[0], stat[1], stat[2], Color.decode(stat[3]));
             if (stat[1].equals("Books Listed")) {
@@ -139,7 +138,7 @@ public class LibraryDashboard extends JFrame {
                 authorsListedValueLabel.setFont(VALUE_FONT);
                 card.add(authorsListedValueLabel, BorderLayout.CENTER);
             } else if (stat[1].equals("Members Listed")) {
-                membersListedValueLabel = new JLabel(stat[0], SwingConstants.CENTER); // Initialize membersListedValueLabel
+                membersListedValueLabel = new JLabel(stat[0], SwingConstants.CENTER);
                 membersListedValueLabel.setFont(VALUE_FONT);
                 card.add(membersListedValueLabel, BorderLayout.CENTER);
             } else if (stat[1].equals("Borrowed Books")) {
@@ -160,27 +159,30 @@ public class LibraryDashboard extends JFrame {
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setBackground(BUTTON_COLOR);
         sidebar.setPreferredSize(new Dimension(SIDEBAR_WIDTH, getHeight()));
-        sidebar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        // Add Dashboard button first
-        JButton dashboardButton = createMenuButton("Dashboard");
-        dashboardButton.addActionListener(e -> openPage("Dashboard"));
-        sidebar.add(dashboardButton);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        // Labels for New Windows (Books, Author, Member, Transaction, Logout)
-        String[] buttonLabels = {"Books", "Member", "Transaction", "Logout"};
+        sidebar.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+    
+        String[] buttonLabels = {"Dashboard", "Books", "Member", "Transaction", "Logout"};
         for (String label : buttonLabels) {
             JButton button = createMenuButton(label);
+            if ((label.equals("Dashboard") && this.getClass() == LibraryDashboard.class) ||
+                (label.equals("Books") && this.getClass() == BooksPage.class) ||
+                (label.equals("Member") && this.getClass() == MembersPage.class) ||
+                (label.equals("Transaction") && this.getClass() == TransactionsPage.class)) {
+                button.setBackground(BUTTON_HOVER_COLOR);
+            }
             button.addActionListener(e -> openPage(label));
+            button.setAlignmentX(Component.CENTER_ALIGNMENT);
+            button.setMaximumSize(new Dimension(180, 50));
             sidebar.add(button);
             sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
         }
-
+    
+        sidebar.add(Box.createVerticalGlue());
+    
         return sidebar;
     }
-
-    // Custom Button For Side Panel
+    
+    // Create Menu Button
     private JButton createMenuButton(String text) {
         JButton button = new JButton(text);
         button.setPreferredSize(new Dimension(180, 60));
@@ -190,30 +192,43 @@ public class LibraryDashboard extends JFrame {
         button.setBorderPainted(false);
         button.setFont(BUTTON_FONT);
         
-        // Add hover effect
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setBackground(BUTTON_HOVER_COLOR);
+                if (button.getBackground() == BUTTON_COLOR) {
+                    button.setBackground(BUTTON_HOVER_COLOR);
+                }
             }
-
+    
             @Override
             public void mouseExited(MouseEvent e) {
-                button.setBackground(BUTTON_COLOR);
+                if (button.getBackground() == BUTTON_HOVER_COLOR && 
+                    !isCurrentPage(text)) {
+                    button.setBackground(BUTTON_COLOR);
+                }
             }
         });
         
         return button;
     }
+    
+    // Check Current Page
+    private boolean isCurrentPage(String buttonText) {
+        if (buttonText.equals("Dashboard") && this.getClass() == LibraryDashboard.class) return true;
+        if (buttonText.equals("Books") && this.getClass() == BooksPage.class) return true;
+        if (buttonText.equals("Member") && this.getClass() == MembersPage.class) return true;
+        if (buttonText.equals("Transaction") && this.getClass() == TransactionsPage.class) return true;
+        return false;
+    }
 
-    // Dashboard Card Display 
+    // Create Card
     private JPanel createCard(String value, String description, String icon, Color bgColor) {
-        JPanel card = new JPanel();
+        JPanel card = new JPanel ();
         card.setBackground(CARD_BACKGROUND_COLOR);
         card.setLayout(new BorderLayout());
         card.setBorder(BorderFactory.createLineBorder(CARD_BORDER_COLOR, 2));
         card.setPreferredSize(new Dimension(200, 100));
-        card .setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        card.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JLabel iconLabel = new JLabel(icon, SwingConstants.CENTER);
         iconLabel.setFont(ICON_FONT);
@@ -232,128 +247,48 @@ public class LibraryDashboard extends JFrame {
         return card;
     }
 
-    // Link to New Window (click->sidePanelButton)
+    // Open Page
     private void openPage(String page) {
-        // Close the current window
-        Window currentWindow = SwingUtilities.getWindowAncestor(this);
+        Window newWindow = null;
 
         switch (page) {
             case "Dashboard":
-                // Always open a new instance of LibraryDashboard
-                if (currentWindow != null) {
-                    currentWindow.dispose();
-                }
-                new LibraryDashboard(user, library);
+                newWindow = new LibraryDashboard(user);
                 break;
 
             case "Books":
-                if (currentWindow != null) {
-                    currentWindow.dispose();
-                }
-                currentWindow = new BooksPage(user);
-                currentWindow.setVisible(true);
-                break;      
+                newWindow = new BooksPage(user);
+                break;
 
             case "Member":
-                if (currentWindow != null) {
-                    currentWindow.dispose();
-                }
-                currentWindow = new MembersPage(user);
-                currentWindow.setVisible(true);
+                newWindow = new MembersPage(user);
                 break;
 
             case "Transaction":
-                if (currentWindow != null) {
-                    currentWindow.dispose();
-                }
-                currentWindow = new TransactionsPage(user);
-                currentWindow.setVisible(true);
+                newWindow = new TransactionsPage(user);
                 break;
 
             case "Logout":
-                System.exit(0);
+                newWindow = new LibraryLogin();
                 break;
 
             default:
-                break;
+                return;
         }
-    }   
 
-    // Time Update Method
+        if (newWindow != null) {
+            newWindow.setVisible(true);
+            SwingUtilities.invokeLater(this::dispose);
+        }
+    }
+
+    // Update Time
     private void updateTime(JLabel label) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a\n MMM dd, yyyy");
         label.setText(dateFormat.format(new Date()));
     }
 
-    // Method To Count Book Data from Database
-    private int getBookCountFromDatabase() {
-        int count = 0;
-        String query = "SELECT COUNT(*) FROM books";
-
-        try (Connection connection = databaseConnection.getConnection(); 
-             PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            if (resultSet.next()) {
-                count = resultSet.getInt(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); 
-        }
-        return count;
-    }
-    
-    // Method To Count Author Data from Database
-    private int getAuthorCountFromDatabase() {
-        int count = 0;
-        String query = "SELECT COUNT(*) FROM authors"; // Assuming you have a table named 'authors'
-
-        try (Connection connection = databaseConnection.getConnection(); 
-             PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            if (resultSet.next()) {
-                count = resultSet.getInt(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); 
-        }
-        return count;
-    }
-
-    // Method To Count Member Data from Database
-    private int getMemberCountFromDatabase() {
-        int count = 0;
-        String query = "SELECT COUNT(*) FROM members"; 
-
-        try (Connection connection = databaseConnection.getConnection(); 
-             PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            if (resultSet.next()) {
-                count = resultSet.getInt(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); 
-        }
-        return count;
-    }
-
-     // Method to count borrowed books from the database
-     private int getBorrowedBookCountFromDatabase() {
-        int count = 0;
-        String query = "SELECT COUNT(*) FROM BorrowedBooks";
-
-        try (Connection connection = databaseConnection.getConnection(); 
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            ResultSet resultSet = preparedStatement.executeQuery()) {
-            if (resultSet.next()) {
-                count = resultSet.getInt(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); 
-        }
-        return count;
-    }
-    
-    // Update Book and Author Count for Card Display
+    // Update Counts
     private void updateCounts() {
         updateBookCount();
         updateAuthorCount();
@@ -361,26 +296,60 @@ public class LibraryDashboard extends JFrame {
         updateBorrowedBooksCount();
     }
 
-    // Method to update the author count
-    private void updateAuthorCount() {
-        int authorCount = getAuthorCountFromDatabase();
-        authorsListedValueLabel.setText(String.valueOf(authorCount));
-    }
-    
-    // Update Book Count for Card Display
+    // Update Book Count
     private void updateBookCount() {
         int bookCount = getBookCountFromDatabase();
         booksListedValueLabel.setText(String.valueOf(bookCount));
     }
 
-    // Update Member Count for Card Display
+    // Update Author Count
+    private void updateAuthorCount() {
+        int authorCount = getAuthorCountFromDatabase();
+        authorsListedValueLabel.setText(String.valueOf(authorCount));
+    }
+
+    // Update Member Count
     private void updateMemberCount() {
-        int memberCount = getMemberCountFromDatabase(); // Corrected to call getMemberCountFromDatabase
+        int memberCount = getMemberCountFromDatabase();
         membersListedValueLabel.setText(String.valueOf(memberCount));
     }
 
+    // Update Borrowed Books Count
     private void updateBorrowedBooksCount() {
         int borrowedBookCount = getBorrowedBookCountFromDatabase();
         borrowedBooksListedValueLabel.setText(String.valueOf(borrowedBookCount));
-    }    
+    }
+
+    // Database Methods
+    private int getBookCountFromDatabase() {
+        return getCountFromDatabase("books");
+    }
+
+    private int getAuthorCountFromDatabase() {
+        return getCountFromDatabase("authors");
+    }
+
+    private int getMemberCountFromDatabase() {
+        return getCountFromDatabase("members");
+    }
+
+    private int getBorrowedBookCountFromDatabase() {
+        return getCountFromDatabase("BorrowedBooks");
+    }
+
+    private int getCountFromDatabase(String tableName) {
+        int count = 0;
+        String query = "SELECT COUNT(*) FROM " + tableName;
+
+        try (Connection connection = databaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                count = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
 }

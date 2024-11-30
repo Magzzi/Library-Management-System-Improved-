@@ -33,7 +33,7 @@ public class BooksPage extends LibraryDashboard {
 
     //Constructor
     public BooksPage(User user) {
-        super(user, null);
+        super(user);
         bookList = new ArrayList<>();
         setTitle("Books Management");
         setupUI();

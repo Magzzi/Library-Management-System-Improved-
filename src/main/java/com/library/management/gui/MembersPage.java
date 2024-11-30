@@ -33,7 +33,7 @@ public class MembersPage extends LibraryDashboard {
 
     // Constructor
     public MembersPage(User user) {
-        super(user, null);
+        super(user);
         memberList = new ArrayList<>();
         setTitle("Members Management");
         setupUI();

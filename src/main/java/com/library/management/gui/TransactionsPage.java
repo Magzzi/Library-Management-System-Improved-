@@ -32,7 +32,7 @@ public class TransactionsPage extends LibraryDashboard {
 
     // Constructor
     public TransactionsPage(User user) {
-        super(user, getLibrary());
+        super(user);
         this.library = getLibrary();
         this.bookList = new ArrayList<>();
         this.memberList = new ArrayList<>();

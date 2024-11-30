@@ -20,10 +20,9 @@ public class LibraryLogin extends JFrame {
     //Attributes for Input fields of username and password
     private JTextField usernameField;
     private JPasswordField passwordField;
-    private Library library;
 
     //Constructor
-    public LibraryLogin(Library library) {
+    public LibraryLogin() {
         setupFrame();
         JPanel mainPanel = createMainPanel();
         add(mainPanel);
@@ -105,19 +104,38 @@ public class LibraryLogin extends JFrame {
         // inputContainer.add(forgotPasswordLabel, gbc);
 
         //Sign-In Button
+        // Sign-In Button
         JButton signInButton = createButton("SIGN IN", e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
 
-            // Authenticate user
-            if (databaseConnection.authenticateUser (username, password)) {
-                User loggedInUser  = new User(username);
-                new LibraryDashboard(loggedInUser , library).setVisible(true); // Pass the library instance
-                dispose(); // Close the login window
-            } else {
-                JOptionPane.showMessageDialog(this, "Invalid username or password", "Login Error", JOptionPane.ERROR_MESSAGE);
-            }
+            // Use SwingWorker to perform authentication in the background
+            SwingWorker<Boolean, Void> worker = new SwingWorker<>() {
+                @Override
+                protected Boolean doInBackground() {
+                    return databaseConnection.authenticateUser (username, password);
+                }
+
+                @Override
+                protected void done() {
+                    try {
+                        if (get()) {
+                            User loggedInUser  = new User(username);
+                            new LibraryDashboard(loggedInUser ).setVisible(true); // Pass the library instance
+                            dispose(); // Close the login window
+                        } else {
+                            JOptionPane.showMessageDialog(LibraryLogin.this, "Invalid username or password", "Login Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(LibraryLogin.this, "An error occurred during login", "Login Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            };
+
+            worker.execute(); // Start the background task
         });
+        
         gbc.gridy = 3;
         inputContainer.add(signInButton, gbc);
 
