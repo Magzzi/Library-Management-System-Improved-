@@ -1,8 +1,8 @@
 package com.library.management.gui;
+
 import com.library.management.database.*;
 import com.library.management.classes.Member;
 import com.library.management.classes.User;
-
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;

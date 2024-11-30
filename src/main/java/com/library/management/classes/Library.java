@@ -115,15 +115,65 @@ public class Library {
         }
     }
 
-    // Return a book for a member
     public boolean returnBook(Member member, Book book) {
-        if (member != null && member.getBorrowedBooks().contains(book)) {
+        Connection conn = null;
+        try {
+            conn = databaseConnection.getConnection();
+            conn.setAutoCommit(false); // Start transaction
+    
+            // Check if the book is actually borrowed by the member
+            String checkBorrowQuery = "SELECT COUNT(*) FROM BorrowedBooks bb " +
+                                      "JOIN Members m ON bb.member_id = m.member_id " +
+                                      "WHERE bb.book_id = ? AND m.member_name = ?";
+            
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkBorrowQuery)) {
+                checkStmt.setInt(1, book.getBookId());
+                checkStmt.setString(2, member.getName());
+                
+                try (ResultSet rs = checkStmt.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) == 0) {
+                        // Book not borrowed by this member
+                        conn.rollback();
+                        return false;
+                    }
+                }
+            }
+    
+            // Increase available copies of the book
+            String updateBookQuery = "UPDATE Books SET available_copies = available_copies + 1 WHERE book_id = ?";
+            try (PreparedStatement updateBookStmt = conn.prepareStatement(updateBookQuery)) {
+                updateBookStmt.setInt(1, book.getBookId());
+                updateBookStmt.executeUpdate();
+            }
+    
+            // Delete the borrowing record
+            deleteBorrowingRecordFromDatabase(member, book, conn);
+    
+            conn.commit(); // Commit transaction
+            
+            // Update member's and book's internal state
             member.returnBook(book);
             book.returnBook();
-            deleteBorrowingRecordFromDatabase(member, book);
+    
             return true; // Successful return
-        } else {
-            return false; // This book was not borrowed by the member
+        } catch (SQLException e) {
+            System.err.println("Error during returning book: " + e.getMessage());
+            if (conn != null) {
+                try {
+                    conn.rollback(); // Rollback transaction
+                } catch (SQLException rollbackEx) {
+                    System.err.println("Error during rollback: " + rollbackEx.getMessage());
+                }
+            }
+            return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close(); // Close connection
+                } catch (SQLException closeEx) {
+                    System.err.println("Error closing connection: " + closeEx.getMessage());
+                }
+            }
         }
     }
 
@@ -231,18 +281,15 @@ public class Library {
         }
     }
 
-    // Adjusted deleteBorrowingRecordFromDatabase method
-    private void deleteBorrowingRecordFromDatabase(Member member, Book book) {
-        try (Connection conn = databaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement("DELETE FROM BorrowedBooks WHERE book_id = ? AND member_id = (SELECT member_id FROM members WHERE member_name = ?)")) {
-            stmt.setInt(1, book.getBookId()); // Book ID from the Book object
-            stmt.setString(2, member.getName()); // Member name to fetch member ID
-            int rowsAffected = stmt.executeUpdate();
-            System.out.println("Deleted borrowing record, rows affected: " + rowsAffected);
-        } catch (SQLException e) {
-            System.err.println("Error deleting borrowing record: " + e.getMessage());
-        }
+    // Modified method to accept connection for transaction management
+private void deleteBorrowingRecordFromDatabase(Member member, Book book, Connection conn) throws SQLException {
+    try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM BorrowedBooks WHERE book_id = ? AND member_id = (SELECT member_id FROM members WHERE member_name = ?)")) {
+        stmt.setInt(1, book.getBookId());
+        stmt.setString(2, member.getName());
+        int rowsAffected = stmt.executeUpdate();
+        System.out.println("Deleted borrowing record, rows affected: " + rowsAffected);
     }
+}
     
     private void insertBookIntoDatabase(Book book) {
         // Check if the book already exists based on ISBN
