@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -15,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 
 public class BooksPage extends LibraryDashboard {
     // Static Attributes
@@ -80,6 +82,9 @@ public class BooksPage extends LibraryDashboard {
         scrollPane.setPreferredSize(new Dimension(0, 0));
         scrollPane.setMaximumSize(new Dimension((int) (Toolkit.getDefaultToolkit().getScreenSize().width * 0.5), Integer.MAX_VALUE));
 
+        // Customize the scrollbar
+        customizeScrollBar(scrollPane);
+
         // Create a panel to add padding around the JScrollPane
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 10, 50));
@@ -112,6 +117,16 @@ public class BooksPage extends LibraryDashboard {
             }
         };
 
+        // Center align the column headers
+        ((DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+
+        // Center align the cell contents
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
         // Set table color
         table.getTableHeader().setBackground(TABLE_HEADER_COLOR);
         table.getTableHeader().setForeground(TABLE_TEXT_COLOR);
@@ -131,6 +146,28 @@ public class BooksPage extends LibraryDashboard {
         table.setForeground(TABLE_TEXT_COLOR);
 
         return table;
+    }
+
+    // Method to customize the scrollbar
+    private void customizeScrollBar(JScrollPane scrollPane) {
+        JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+        JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
+
+        verticalScrollBar.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = THEME_COLOR; // Set the color of the scrollbar thumb
+                this.trackColor = Color.WHITE; // Set the color of the scrollbar track
+            }
+        });
+
+        horizontalScrollBar.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = THEME_COLOR; // Set the color of the scrollbar thumb
+                this.trackColor = Color.WHITE; // Set the color of the scrollbar track
+            }
+        });
     }
 
     // Create Custom Button Panel
