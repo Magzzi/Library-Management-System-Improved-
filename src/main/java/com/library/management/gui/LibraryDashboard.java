@@ -123,8 +123,8 @@ public class LibraryDashboard extends JFrame {
         String[][] stats = {
             {"0", "Books Listed", "📚", "#28A745"},
             {"0", "Borrowed Books", "📑", "#007BFF"},
-            {"0", "Members Listed", "👤", "#DC3545"},
-            {"0", "Authors Listed", "👨‍💻", "#17A2B8"},
+            {"0", "Authors Listed", "👤", "#DC3545"},
+            {"0", "Members Listed", "👨‍💻", "#17A2B8"},
         };
 
         // Logic for Changing The Number of Card Values
